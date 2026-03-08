@@ -6,11 +6,11 @@
 //							
 //	OPTIONAL DEFINES					
 //		
-#define USE_OFX_SURFING_FX // un-comment to include fx processor (ofxSurfingFX)
+//#define USE_OFX_SURFING_FX // un-comment to include fx processor (ofxSurfingFX)
 //		
 //#define INCLUDE_ofxPresetsManager // un-comment to include the presets manager (ofxPresetsManager)
 //							
-#define INCLUDE_FX_MASK // un-comment to include the mask fx (ofxDotFrag)
+//#define INCLUDE_FX_MASK // un-comment to include the mask fx (ofxDotFrag)
 //		
 //-----------------------------
 
@@ -19,7 +19,7 @@
 //	+	allow one channel enable/preview without broke mixing
 
 
-#define INCLUDE_GUI_EXTENDED
+//#define INCLUDE_GUI_EXTENDED
 #ifdef INCLUDE_GUI_EXTENDED
 #include "ofxGuiExtended2.h"
 #endif

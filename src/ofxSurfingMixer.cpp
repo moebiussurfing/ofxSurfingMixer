@@ -17,8 +17,8 @@ ofxSurfingMixer::ofxSurfingMixer()
 
 	//--
 
-	path_Theme = "assets/theme/";
-	path_Theme += "theme_ofxGuiExtended2_01.json";
+	//path_Theme = "assets/theme/";
+	//path_Theme += "theme_ofxGuiExtended2_01.json";
 
 	//-
 
@@ -1992,7 +1992,7 @@ void ofxSurfingMixer::windowResized(int w, int h)
 #endif
 
 	//mixer
-	panel_MIXER->setPosition(preview_Position.get().x + 5, preview_Position.get().y + 165);
+	//panel_MIXER->setPosition(preview_Position.get().x + 5, preview_Position.get().y + 165);
 	//panel_MIXER->setPosition(window_W - (6 * 200), 5);
 }
 
@@ -2162,7 +2162,7 @@ void ofxSurfingMixer::keyPressed(ofKeyEventArgs &eventArgs)
 				//reload gui theme
 				else if (key == 'j')
 				{
-					loadTheme(path_Theme);
+					//loadTheme(path_Theme);
 				}
 			}
 		}
@@ -2181,7 +2181,7 @@ void ofxSurfingMixer::keyPressed(ofKeyEventArgs &eventArgs)
 			presetsManager.setVisible_GUI_Internal(bGuiAdv);
 #endif
 			//gui extended
-			gui.getVisible().set(SHOW_GuiAll);
+			//gui.getVisible().set(SHOW_GuiAll);
 		}
 		//---
 
@@ -2229,12 +2229,12 @@ void ofxSurfingMixer::keyPressed(ofKeyEventArgs &eventArgs)
 			//i = i % NUM_MODES_APP;
 			//MODE_AppMixer = i + 1;
 
-			//using tabs
-			int i = selectedTab;
-			i++;
-			i = i % NUM_TABS;
-			selectedTab = i;
-			gTabs->setActiveTab(selectedTab);
+			////using tabs
+			//int i = selectedTab;
+			//i++;
+			//i = i % NUM_TABS;
+			//selectedTab = i;
+			//gTabs->setActiveTab(selectedTab);
 		}
 
 		//---
@@ -2464,7 +2464,7 @@ void ofxSurfingMixer::setGuiVisible(bool b)
 #endif
 
 	//gui extended
-	gui.getVisible().set(b);
+	//gui.getVisible().set(b);
 }
 
 
@@ -2499,11 +2499,11 @@ void ofxSurfingMixer::Changed_params_Settings(ofAbstractParameter &e)
 				ENABLE_MASK = false;
 				ENABLE_MIXER = false;
 				MODE_AppMixer = 2;
-				if (selectedTab != 0)
-				{
-					selectedTab = 0;
-					gTabs->setActiveTab(selectedTab);
-				}
+				//if (selectedTab != 0)
+				//{
+				//	selectedTab = 0;
+				//	gTabs->setActiveTab(selectedTab);
+				//}
 			}
 			DISABLE_Callbacks = false;
 
@@ -2517,11 +2517,11 @@ void ofxSurfingMixer::Changed_params_Settings(ofAbstractParameter &e)
 				ENABLE_BLEND = false;
 				ENABLE_MASK = false;
 				MODE_AppMixer = 1;
-				if (selectedTab != 1)
-				{
-					selectedTab = 1;
-					gTabs->setActiveTab(selectedTab);
-				}
+				//if (selectedTab != 1)
+				//{
+				//	selectedTab = 1;
+				//	gTabs->setActiveTab(selectedTab);
+				//}
 			}
 			DISABLE_Callbacks = false;
 
@@ -2535,11 +2535,11 @@ void ofxSurfingMixer::Changed_params_Settings(ofAbstractParameter &e)
 				ENABLE_BLEND = false;
 				ENABLE_MIXER = false;
 				MODE_AppMixer = 3;
-				if (selectedTab != 2)
-				{
-					selectedTab = 2;
-					gTabs->setActiveTab(selectedTab);
-				}
+				//if (selectedTab != 2)
+				//{
+				//	selectedTab = 2;
+				//	gTabs->setActiveTab(selectedTab);
+				//}
 			}
 			DISABLE_Callbacks = false;
 
@@ -2825,7 +2825,7 @@ void ofxSurfingMixer::Changed_params_AppSession(ofAbstractParameter &e)
 
 		else if (name == SHOW_Preview.getName())
 		{
-			gUser->getControl(SHOW_Backgrounds.getName())->setEnabled(SHOW_Preview.get());
+			//gUser->getControl(SHOW_Backgrounds.getName())->setEnabled(SHOW_Preview.get());
 		}
 	}
 }
