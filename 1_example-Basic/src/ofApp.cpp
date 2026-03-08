@@ -1,16 +1,14 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofApp::setup()
-{
+void ofApp::setup() {
 	ofSetFrameRate(60);
 
 	mixer.setup();
 }
 
 //--------------------------------------------------------------
-void ofApp::update()
-{
+void ofApp::update() {
 	// channel 1
 	mixer.begin_PRE_Channel_1();
 	{
@@ -29,8 +27,7 @@ void ofApp::update()
 }
 
 //--------------------------------------------------------------
-void ofApp::draw()
-{
+void ofApp::draw() {
 	// mixer
 	mixer.drawMixer();
 
@@ -39,27 +36,22 @@ void ofApp::draw()
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key)
-{
+void ofApp::keyPressed(int key) {
 	// scene
-	if (key == 'S')
-	{
+	if (key == 'S') {
 		scene.setToggleGuiVisible();
 	}
 
 	// mixer
-	if (key == 'M')
-	{
+	if (key == 'M') {
 		mixer.setToggleGuiVisible();
 	}
-	if (key == 'A')
-	{
+	if (key == 'A') {
 		mixer.setToggleActive();
 	}
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h)
-{
+void ofApp::windowResized(int w, int h) {
 	mixer.windowResized(w, h);
 }

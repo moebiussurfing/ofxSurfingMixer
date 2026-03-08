@@ -641,18 +641,7 @@ void ofxSurfingMixer::drawMixer() {
 
 #ifdef INCLUDE_MASK_MODE
 	if (ENABLE_MASK) {
-	#ifdef INCLUDE_FX_MASK
-		if (!ENABLE_FX_MASK)
-			fbo_MixOut.draw(0, 0, ofGetWidth(), ofGetHeight());
-		else {
-			update_FxMask();
-
-			ofSetColor(255, 255);
-			fbo_VideoFx.draw(0, 0, ofGetWidth(), ofGetHeight());
-		}
-	#else
 		fbo_MixOut.draw(0, 0, ofGetWidth(), ofGetHeight());
-	#endif
 	}
 #endif
 
@@ -1148,24 +1137,6 @@ void ofxSurfingMixer::setup() {
 	//params_Preset.add(params_Blend);
 	//params_Preset.add(params_Mask);
 
-	//-
-
-#ifdef INCLUDE_ofxPresetsManager
-
-	//customize
-	presetsManager.setPath_GlobalFolder("ofxSurfingMixer/ofxPresetsManager");
-	presetsManager.setPath_KitFolder("presets");
-	presetsManager.setPath_ControlSettings("settings");
-	presetsManager.setPath_PresetsFolder("archive");
-	presetsManager.setEnableKeysArrowBrowse(false);
-
-	//-
-
-	//add group params
-	presetsManager.add(params_Preset, { 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i' });
-	presetsManager.setup("ofxSurfingMixer"); //optional name
-#endif
-
 	//--------------------------------------------------------------
 
 	//startup
@@ -1176,9 +1147,6 @@ void ofxSurfingMixer::setup() {
 
 	startup();
 
-#ifdef INCLUDE_ofxPresetsManager
-	presetsManager.refresh();
-#endif
 }
 
 //--------------------------------------------------------------
@@ -1191,11 +1159,9 @@ void ofxSurfingMixer::startup() {
 	//settings
 	loadParams(params_AppSession, path_GLOBAL + path_Params_AppSession);
 
-#ifndef INCLUDE_ofxPresetsManager
 	loadParams(params_Preset, path_GLOBAL + path_Params_Preset); //all
 	//loadParams(params_Mixer, path_GLOBAL + path_Params_Mixer);
 	//loadParams(params_Mask, path_GLOBAL + path_Params_Mask);
-#endif
 
 	guiRefresh();
 
@@ -1221,17 +1187,6 @@ void ofxSurfingMixer::updateEngine() {
 
 	//--
 
-#ifdef INCLUDE_ofxPresetsManager
-	//presetsManager
-	//simple callback when preset is loaded
-	if (presetsManager.isDoneLoad()) {
-		ofLogNotice(__FUNCTION__) << "-----------------------------------PRESET LOADED";
-		//ofLogNotice(__FUNCTION__) << endl;
-	}
-#endif
-
-	//--
-
 	//autosave
 	if (ENABLE_AutoSave && ofGetElapsedTimeMillis() - timerLast_Autosave > timeToAutosave) {
 		DISABLE_Callbacks = true;
@@ -1243,12 +1198,10 @@ void ofxSurfingMixer::updateEngine() {
 
 		saveParams(params_AppSession, path_GLOBAL + path_Params_AppSession);
 
-#ifndef INCLUDE_ofxPresetsManager
 		saveParams(params_Preset, path_GLOBAL + path_Params_Preset);
 
 		//saveParams(params_Mixer, path_GLOBAL + path_Params_Mixer);
 		//saveParams(params_Mask, path_GLOBAL + path_Params_Mask);
-#endif
 
 		timerLast_Autosave = ofGetElapsedTimeMillis();
 		if (true) ofLogNotice(__FUNCTION__) << "\t\t\t\t\t\t\t\t\t[AUTOSAVE]";
@@ -1296,12 +1249,10 @@ void ofxSurfingMixer::exit() {
 
 	saveParams(params_AppSession, path_GLOBAL + path_Params_AppSession);
 
-#ifndef INCLUDE_ofxPresetsManager
 	saveParams(params_Preset, path_GLOBAL + path_Params_Preset); //all settings
 
 	//saveParams(params_Mixer, path_GLOBAL + path_Params_Mixer);
 	//saveParams(params_Mask, path_GLOBAL + path_Params_Mask);
-#endif
 }
 
 //--------------------------------------------------------------
@@ -1333,13 +1284,6 @@ void ofxSurfingMixer::windowResized(int w, int h) {
 	//reallocatewindow_W, window_H);
 
 	resizeFbos(window_W, window_H);
-
-#ifdef INCLUDE_ofxPresetsManager
-	//presetsManager
-	//clicker centered
-	float wp = window_W * 0.5f - presetsManager.getPresetClicker_Width() * 0.5f;
-	presetsManager.setPosition_PresetClicker(wp, window_H - 185, 50);
-#endif
 
 	//mixer
 	//panel_MIXER->setPosition(preview_Position.get().x + 5, preview_Position.get().y + 165);
@@ -1483,12 +1427,6 @@ void ofxSurfingMixer::keyPressed(ofKeyEventArgs & eventArgs) {
 			ofLogNotice(__FUNCTION__) << "SHOW_GuiAll:" << SHOW_GuiAll.get();
 
 			if (!SHOW_GuiAll) bGuiAdv = SHOW_GuiAll;
-
-#ifdef INCLUDE_ofxPresetsManager
-			presetsManager.setVisible_GUI_Internal(bGuiAdv);
-#endif
-			//gui extended
-			//gui.getVisible().set(SHOW_GuiAll);
 		}
 		//---
 
@@ -1507,14 +1445,6 @@ void ofxSurfingMixer::keyPressed(ofKeyEventArgs & eventArgs) {
 		else if (key == 'p') {
 			SHOW_Preview = !SHOW_Preview;
 		}
-
-#ifdef INCLUDE_ofxPresetsManager
-		//presets clicker
-		else if (key == OF_KEY_F3) {
-			bool b = presetsManager.isVisible_PresetClicker();
-			presetsManager.setVisible_PresetClicker(!b);
-		}
-#endif
 
 		//swap
 		else if (key == '/') // || key == OF_KEY_BACKSPACE)
@@ -1585,9 +1515,6 @@ void ofxSurfingMixer::keyPressed(ofKeyEventArgs & eventArgs) {
 	if (key == 'G') {
 		bGuiAdv = !bGuiAdv;
 
-#ifdef INCLUDE_ofxPresetsManager
-		presetsManager.setVisible_GUI_Internal(bGuiAdv);
-#endif
 	}
 }
 
@@ -1670,11 +1597,6 @@ void ofxSurfingMixer::setActive(bool b) {
 
 		//mixer
 
-#ifdef INCLUDE_ofxPresetsManager
-		presetsManager.setVisible_PresetClicker(false);
-		presetsManager.setEnableKeys(false);
-		presetsManager.setVisible_GUI_Internal(false);
-#endif
 		//preview monitors
 		//SHOW_Preview = false;
 
@@ -1686,19 +1608,6 @@ void ofxSurfingMixer::setActive(bool b) {
 	else {
 		addKeysListeners();
 		addMouseListeners();
-
-#ifdef INCLUDE_ofxPresetsManager
-		//if (MODE_SHOW_FboFxHelper)
-		//{
-		//	//presetsManager.set_GUI_Internal_Visible(b);
-		//	//presetsManager.set_CLICKER_Visible(false);
-		//	//presetsManager.set_ENABLE_Keys(false);
-		//}
-
-		//mixer
-		presetsManager.setVisible_PresetClicker(true);
-		presetsManager.setEnableKeys(true);
-#endif
 
 		//gui
 		SHOW_GuiAll = true;
@@ -1910,10 +1819,6 @@ void ofxSurfingMixer::Changed_params_AppSession(ofAbstractParameter & e) {
 		//gui
 		else if (name == "GUI") {
 			//mixer
-#ifdef INCLUDE_ofxPresetsManager
-			presetsManager.setVisible_PresetClicker(SHOW_GuiAll);
-			if (!SHOW_GuiAll) presetsManager.setVisible_GUI_Internal(false);
-#endif
 		}
 
 		else if (name == "HELP") {
@@ -1921,15 +1826,6 @@ void ofxSurfingMixer::Changed_params_AppSession(ofAbstractParameter & e) {
 		}
 
 		else if (name == "KEYS") {
-#ifdef INCLUDE_ofxPresetsManager
-			if (ENABLE_keys_AllMixer) {
-				// mixer
-				presetsManager.setEnableKeys(true);
-			} else {
-				// mixer
-				presetsManager.setEnableKeys(false);
-			}
-#endif
 		}
 
 		//----

@@ -1,56 +1,33 @@
 #pragma once
 #include "ofMain.h"
 
-
 //-----------------------------
-//							
-//	OPTIONAL DEFINES					
-//		
-//#define USE_OFX_SURFING_FX // un-comment to include fx processor (ofxSurfingFX)
-//		
-//#define INCLUDE_ofxPresetsManager // un-comment to include the presets manager (ofxPresetsManager)
-//							
-//#define INCLUDE_FX_MASK // un-comment to include the mask fx (ofxDotFrag)
-//		
-//-----------------------------
-
 
 //	TODO:
 //	+	allow one channel enable/preview without broke mixing
 
-
 #define INCLUDE_ofxGui
 #ifdef INCLUDE_ofxGui
-#include "ofxGui.h"
+	#include "ofxGui.h"
 #endif
 
 // 1. blend
 #define INCLUDE_BLEND_MODE
 #ifdef INCLUDE_BLEND_MODE
-#include "ofxPSBlend.h"
+	#include "ofxPSBlend.h"
 #endif
 //#define BLEND_TOGGLES // too much toggles (24)... out of screen
 
 // 2. mixer
 #define INCLUDE_MIXER_MODE
 #ifdef INCLUDE_MIXER_MODE
-#include "ofxGpuMixer.h"
+	#include "ofxGpuMixer.h"
 #endif
 
 // 3. mask
 #define INCLUDE_MASK_MODE
 #ifdef INCLUDE_MASK_MODE
-#include "ofxAlphaMask.h"
-#endif
-
-// fx
-#ifdef INCLUDE_FX_MASK
-#include "ofxDotFrag.h"
-#endif
-
-//presets
-#ifdef INCLUDE_ofxPresetsManager
-#include "ofxPresetsManager.h"
+	#include "ofxAlphaMask.h"
 #endif
 
 //app modes
@@ -61,11 +38,9 @@
 
 //-
 
-class ofxSurfingMixer : public ofBaseApp
-{
+class ofxSurfingMixer : public ofBaseApp {
 
 public:
-
 	ofxSurfingMixer();
 	~ofxSurfingMixer();
 
@@ -86,21 +61,14 @@ private:
 
 public:
 	//--------------------------------------------------------------
-	ofParameterGroup& getParams_Mixer() {
+	ofParameterGroup & getParams_Mixer() {
 		return params_Preset;
 	}
 
 	//--
 
 private:
-
-	//-
-
 	bool bGuiAdv = false;
-
-#ifdef INCLUDE_ofxPresetsManager
-	ofxPresetsManager presetsManager;
-#endif
 
 	//--
 
@@ -174,26 +142,13 @@ public:
 private:
 	ofFbo fbo_Input_1; // channel1: background ?
 	ofFbo fbo_Input_2; // channel2: letters (will be the blend mix from channel 1 and channel 2 already ?
-	ofFbo fbo_MixOut; // mixed. final mixed of the 2 channels. for drawing or to apply 'global fx' 
+	ofFbo fbo_MixOut; // mixed. final mixed of the 2 channels. for drawing or to apply 'global fx'
 
 	//--
 
 	// 3. MASK
 #ifdef INCLUDE_MASK_MODE
 	ofxAlphaMask alphaMask;
-#endif
-
-	// black and white
-#ifdef INCLUDE_FX_MASK
-	ofx::dotfrag::HSB frag2;
-	ofx::dotfrag::Monochrome frag1;
-	ofx::dotfrag::InvertStrobe frag3;
-	ofParameter<bool> bReset{ "RESET", false };
-	void Changed_bReset();
-	ofEventListener listener_bReset;
-	ofFbo fbo_VideoFx;
-	ofParameter<bool> ENABLE_FX_MASK{ "ENABLE FX MASK", true };
-	void update_FxMask();
 #endif
 
 	// TODO:
@@ -206,9 +161,9 @@ private:
 	// blender
 #ifdef INCLUDE_BLEND_MODE
 	ofxPSBlend psBlend;
-#ifdef BLEND_TOGGLES
-	vector <ofParameter<bool>> ENABLE_Blends;
-#endif
+	#ifdef BLEND_TOGGLES
+	vector<ofParameter<bool>> ENABLE_Blends;
+	#endif
 #endif
 
 	//--
@@ -216,40 +171,39 @@ private:
 	// params
 
 private:
-
 	// control
-	ofParameter<bool> ENABLE_FboFxHelper{ "ENABLE FX", true };
-	ofParameter<bool> MODE_SHOW_FboFxHelper{ "SHOW FX", false };
-	ofParameter<bool> MODE_PRESET_MIXER{ "MIXER PRESETS", false };
+	ofParameter<bool> ENABLE_FboFxHelper { "ENABLE FX", true };
+	ofParameter<bool> MODE_SHOW_FboFxHelper { "SHOW FX", false };
+	ofParameter<bool> MODE_PRESET_MIXER { "MIXER PRESETS", false };
 
 	// 1. blend
-	ofParameterGroup params_Blend{ "MODE BLEND" };
-	ofParameter<bool> ENABLE_BLEND{ "ENABLE MODE BLEND", false };
-	ofParameter<bool> SHOW_Preview{ "SHOW PREVIEW", true };
-	ofParameter<bool> swapChannels{ "SWAP CHANNELS", false };
-	ofParameter<bool> SHOW_Backgrounds{ "SHOW BG TINTS", false };
-	ofParameter<std::string> swapInfo{ "", "" };
-	ofParameter<int> blendMode{ "BLEND MODE", 0, 0, 24 };
-	ofParameter<std::string> blendName{ "", "" };
+	ofParameterGroup params_Blend { "MODE BLEND" };
+	ofParameter<bool> ENABLE_BLEND { "ENABLE MODE BLEND", false };
+	ofParameter<bool> SHOW_Preview { "SHOW PREVIEW", true };
+	ofParameter<bool> swapChannels { "SWAP CHANNELS", false };
+	ofParameter<bool> SHOW_Backgrounds { "SHOW BG TINTS", false };
+	ofParameter<std::string> swapInfo { "", "" };
+	ofParameter<int> blendMode { "BLEND MODE", 0, 0, 24 };
+	ofParameter<std::string> blendName { "", "" };
 
 	// 3. mask
-	ofParameterGroup params_Mask{ "MODE MASK" };
-	ofParameter<bool> ENABLE_MASK{ "ENABLE MODE MASK", false };
+	ofParameterGroup params_Mask { "MODE MASK" };
+	ofParameter<bool> ENABLE_MASK { "ENABLE MODE MASK", false };
 
 	//2. mixer
-	ofParameterGroup params_Mixer{ "MODE MIXER" };
-	ofParameter<bool> ENABLE_MIXER{ "ENABLE MODE MIXER", false };
+	ofParameterGroup params_Mixer { "MODE MIXER" };
+	ofParameter<bool> ENABLE_MIXER { "ENABLE MODE MIXER", false };
 
-	ofParameterGroup params_Backgrounds{ "BACKGROUNDS" };
-	ofParameter<bool> ENABLE_Channel1{ "CHANNEL 1", true };
-	ofParameter<bool> ENABLE_Channel2{ "CHANNEL 2", true };
-	ofParameter<bool> ENABLE_Bg1{ "BG1", true };
-	ofParameter<bool> ENABLE_Bg2{ "BG2", true };
-	ofParameter<bool> ENABLE_BgMix{ "BG MIX", true };
-	ofParameter<ofColor> colorBg1{ "BG1 COLOR", ofColor(0, 255), ofColor(0, 0), ofColor(255, 255) };
-	ofParameter<ofColor> colorBg2{ "BG2 COLOR", ofColor(0, 255), ofColor(0, 0), ofColor(255, 255) };
-	ofParameter<ofColor> colorBgMix{ "BG MIX COLOR", ofColor(0, 255), ofColor(0, 0), ofColor(255, 255) };
-	ofParameter<bool> RESET_Backgrounds{ "RESET", false };
+	ofParameterGroup params_Backgrounds { "BACKGROUNDS" };
+	ofParameter<bool> ENABLE_Channel1 { "CHANNEL 1", true };
+	ofParameter<bool> ENABLE_Channel2 { "CHANNEL 2", true };
+	ofParameter<bool> ENABLE_Bg1 { "BG1", true };
+	ofParameter<bool> ENABLE_Bg2 { "BG2", true };
+	ofParameter<bool> ENABLE_BgMix { "BG MIX", true };
+	ofParameter<ofColor> colorBg1 { "BG1 COLOR", ofColor(0, 255), ofColor(0, 0), ofColor(255, 255) };
+	ofParameter<ofColor> colorBg2 { "BG2 COLOR", ofColor(0, 255), ofColor(0, 0), ofColor(255, 255) };
+	ofParameter<ofColor> colorBgMix { "BG MIX COLOR", ofColor(0, 255), ofColor(0, 0), ofColor(255, 255) };
+	ofParameter<bool> RESET_Backgrounds { "RESET", false };
 
 #ifdef INCLUDE_MIXER_MODE
 private:
@@ -260,23 +214,22 @@ private:
 	ofTexture tex_Mixer_B;
 	ofParameter<ofColor> colorBackground;
 
-#ifdef INCLUDE_ofxGui
+	#ifdef INCLUDE_ofxGui
 	ofxPanel gui_Mixer;
-#endif
+	#endif
 #endif
 
 	//--
 
 private:
 	//--------------------------------------------------------------
-	void drawPreviewBorders(float x, float y, float w, float h)
-	{
+	void drawPreviewBorders(float x, float y, float w, float h) {
 		ofPushStyle();
 		ofNoFill();
 		float pad = 1.0f;
-		ofSetLineWidth(3.0f*pad);
+		ofSetLineWidth(3.0f * pad);
 		//ofSetColor(32, 255);//dark
-		ofSetColor(255, 64);//white
+		ofSetColor(255, 64); //white
 		//ofDrawRectangle(x - pad, y - pad, w + 2 * pad, h + 2 * pad);
 		ofDrawRectRounded(x - pad, y - pad, w + 2 * pad, h + 2 * pad, 5.0f);
 		ofPopStyle();
@@ -288,13 +241,11 @@ private:
 
 public:
 	//--------------------------------------------------------------
-	void setPreview_Position(glm::vec2 pos)
-	{
+	void setPreview_Position(glm::vec2 pos) {
 		preview_Position = pos;
 	}
 
 	//------------------------------------------------------------------------------
-
 
 	void setActive(bool b);
 	//--------------------------------------------------------------
@@ -309,42 +260,35 @@ public:
 
 	//TODO:
 	//--------------------------------------------------------------
-	void setUserVisible(bool b)
-	{
+	void setUserVisible(bool b) {
 	}
 
 	//--
 
 	//presets loaders
 	//--------------------------------------------------------------
-	void loadPreset_blend(int p)
-	{
-#ifdef INCLUDE_ofxPresetsManager
-		presetsManager.loadPreset(p);
-#endif
+	void loadPreset_blend(int p) {
 	}
 
 	void setLogLevel(ofLogLevel level);
 	void setKey_MODE_App(int k);
-	void setPathGlobal(std::string s);//must call before setup. disabled by default
+	void setPathGlobal(std::string s); //must call before setup. disabled by default
 
 	//--------------------------------------------------------------
-	void setAutoSave(bool b)
-	{
+	void setAutoSave(bool b) {
 		ENABLE_AutoSave = b;
 	}
 
 	//--
 
 private:
-
-	int key_MODE_AppMixer = OF_KEY_TAB;//default key to switch MODE_AppMixer
+	int key_MODE_AppMixer = OF_KEY_TAB; //default key to switch MODE_AppMixer
 	int window_W, window_H;
 
 	//autosave
 	ofParameter<bool> ENABLE_AutoSave;
 	uint64_t timerLast_Autosave = 0;
-	int timeToAutosave = 10000;//10 secs
+	int timeToAutosave = 10000; //10 secs
 
 	//updating some params before save will trigs also the group callbacks
 	//so we disable this callbacks just in case params updatings are required
@@ -354,7 +298,6 @@ private:
 	//-
 
 private:
-
 	ofParameterGroup params_Internal;
 	ofParameter<bool> MODE_Active;
 	ofParameter<bool> ENABLE_keys_AllMixer;
@@ -373,29 +316,26 @@ private:
 	//-
 
 private:
-
-	void Changed_params_Settings(ofAbstractParameter &e);
-	void Changed_params_AppSession(ofAbstractParameter &e);
+	void Changed_params_Settings(ofAbstractParameter & e);
+	void Changed_params_AppSession(ofAbstractParameter & e);
 
 private:
-
 	//keys
-	void keyPressed(ofKeyEventArgs &eventArgs);
-	void keyReleased(ofKeyEventArgs &eventArgs);
+	void keyPressed(ofKeyEventArgs & eventArgs);
+	void keyReleased(ofKeyEventArgs & eventArgs);
 	void addKeysListeners();
 	void removeKeysListeners();
 
 	//mouse
-	void mouseDragged(ofMouseEventArgs &eventArgs);
-	void mousePressed(ofMouseEventArgs &eventArgs);
-	void mouseReleased(ofMouseEventArgs &eventArgs);
+	void mouseDragged(ofMouseEventArgs & eventArgs);
+	void mousePressed(ofMouseEventArgs & eventArgs);
+	void mouseReleased(ofMouseEventArgs & eventArgs);
 	void addMouseListeners();
 	void removeMouseListeners();
 
 	//-
 
 private:
-
 	//path folder and filenames
 	std::string path_GLOBAL;
 	std::string path_Params_AppSession;
@@ -403,8 +343,8 @@ private:
 	std::string path_Params_Mixer;
 	std::string path_Params_Mask;
 
-	void loadParams(ofParameterGroup &g, std::string path);
-	void saveParams(ofParameterGroup &g, std::string path);
+	void loadParams(ofParameterGroup & g, std::string path);
+	void saveParams(ofParameterGroup & g, std::string path);
 
 	void guiRefresh();
 
@@ -412,7 +352,7 @@ private:
 	ofTrueTypeFont myFont;
 	ofTrueTypeFont myFontHelp;
 	ofTrueTypeFont myFontSmall;
-	std::string myTTF;// gui font for all gui theme
+	std::string myTTF; // gui font for all gui theme
 	int sizeTTF;
 
 	void drawPreviewsCheckerboard(float x, float y, float width, float height, float size);
