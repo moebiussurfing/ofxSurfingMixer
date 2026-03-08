@@ -24,31 +24,26 @@
 #include "ofxGui.h"
 #endif
 
-//fx helper
-#ifdef USE_OFX_SURFING_FX
-#include "ofxSurfingFX.h"
-#endif
-
-//1. blend
+// 1. blend
 #define INCLUDE_BLEND_MODE
 #ifdef INCLUDE_BLEND_MODE
 #include "ofxPSBlend.h"
 #endif
 //#define BLEND_TOGGLES // too much toggles (24)... out of screen
 
-//2. mixer
+// 2. mixer
 #define INCLUDE_MIXER_MODE
 #ifdef INCLUDE_MIXER_MODE
 #include "ofxGpuMixer.h"
 #endif
 
-//3. mask
+// 3. mask
 #define INCLUDE_MASK_MODE
 #ifdef INCLUDE_MASK_MODE
 #include "ofxAlphaMask.h"
 #endif
 
-//fx
+// fx
 #ifdef INCLUDE_FX_MASK
 #include "ofxDotFrag.h"
 #endif
@@ -87,7 +82,7 @@ private:
 
 	//--
 
-	//parameters for presets
+	// parameters for presets
 
 public:
 	//--------------------------------------------------------------
@@ -95,17 +90,10 @@ public:
 		return params_Preset;
 	}
 
-public:
-#ifdef USE_OFX_SURFING_FX
-	//--------------------------------------------------------------
-	ofParameterGroup& getParams_Fx() {
-		return FX_Processor.getParametersPreset();
-	}
-#endif
-
 	//--
 
 private:
+
 	//-
 
 	bool bGuiAdv = false;
@@ -124,17 +112,9 @@ private:
 
 	ofParameterGroup params_Preset;
 
-	//-
-
-	//fx helper
-#ifdef USE_OFX_SURFING_FX
-	public:
-	ofxSurfingFX FX_Processor;
-#endif
-
 	//----
 
-	//API
+	// API
 
 public:
 	void setToggleFX(bool b);
@@ -146,8 +126,8 @@ private:
 	void resizeFbos(int w, int h);
 
 public:
-	//TODO:
-	//to route to the fx's?
+	// TODO:
+	// to route to the fx's?
 	void begin_PRE_Channel_1();
 	void end_PRE_Channel_1();
 	void begin_PRE_Channel_2();
@@ -178,7 +158,7 @@ public:
 
 	//--
 
-	//TODO: customize channel names
+	// TODO: customize channel names
 	//std::string nameChannel1, nameChannel2;
 	//void setNameChannel1(std::string s)
 	//{
@@ -192,18 +172,18 @@ public:
 	//--
 
 private:
-	ofFbo fbo_Input_1;//channel1: background ?
-	ofFbo fbo_Input_2;//channel2: letters (will be the blend mix from channel 1 and channel 2 already ?
-	ofFbo fbo_MixOut;//mixed. final mixed of the 2 channels. for drawing or to apply 'global fx' 
+	ofFbo fbo_Input_1; // channel1: background ?
+	ofFbo fbo_Input_2; // channel2: letters (will be the blend mix from channel 1 and channel 2 already ?
+	ofFbo fbo_MixOut; // mixed. final mixed of the 2 channels. for drawing or to apply 'global fx' 
 
 	//--
 
-	//3. MASK
+	// 3. MASK
 #ifdef INCLUDE_MASK_MODE
 	ofxAlphaMask alphaMask;
 #endif
 
-	//black and white
+	// black and white
 #ifdef INCLUDE_FX_MASK
 	ofx::dotfrag::HSB frag2;
 	ofx::dotfrag::Monochrome frag1;
@@ -216,14 +196,14 @@ private:
 	void update_FxMask();
 #endif
 
-	//TODO:
-	//workaround to avoid startup crashes by 'recursive callbacks'...?
+	// TODO:
+	// workaround to avoid startup crashes by 'recursive callbacks'...?
 	bool bMaskRunning = false;
 	bool bBlendRunning = false;
 
 	//-
 
-	//blender
+	// blender
 #ifdef INCLUDE_BLEND_MODE
 	ofxPSBlend psBlend;
 #ifdef BLEND_TOGGLES
@@ -231,7 +211,7 @@ private:
 #endif
 #endif
 
-	//-
+	//--
 
 	// params
 
@@ -331,17 +311,6 @@ public:
 	//--------------------------------------------------------------
 	void setUserVisible(bool b)
 	{
-		//presets
-#ifdef INCLUDE_ofxPresetsManager
-		//mixer
-		presetsManager.setVisible_PresetClicker(b);
-		presetsManager.setEnableKeys(b);
-#endif
-
-		//fx
-#ifdef USE_OFX_SURFING_FX
-		FX_Processor.setUserVisible(b);
-#endif
 	}
 
 	//--
