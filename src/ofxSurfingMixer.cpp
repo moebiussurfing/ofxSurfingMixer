@@ -243,199 +243,15 @@ void ofxSurfingMixer::resizeFbos(int w, int h)
 //--------------------------------------------------------------
 void ofxSurfingMixer::guiCustomize()
 {
-#ifdef INCLUDE_GUI_EXTENDED
-
-	//big toggles
-	auto pList = gUser->getControls();
-	for (auto &p : pList)
-	{
-		//exclude
-		if (p->getName() != swapChannels.getName() &&
-			p->getName() != SHOW_Backgrounds.getName())
-		{
-
-			if (p->getName() == SHOW_Preview.getName() ||
-#ifdef USE_OFX_SURFING_FX
-				p->getName() == ENABLE_FboFxHelper.getName() ||
-				p->getName() == MODE_SHOW_FboFxHelper.getName() ||
-#endif
-				false)
-			{
-				p->setConfig(jButton_BIG_L);
-			}
-			else
-			{
-				p->setConfig(jButton_BIG);
-			}
-
-			ofLogVerbose(__FUNCTION__) << "big toggles:" << p->getName() << endl;
-		}
-	}
-
-	//-
-
-	//browse tabs
-	gTabs->getActiveTabIndex().addListener(this, &ofxSurfingMixer::Changed_tabGui);
-	selectedTab = 0;
-	gTabs->setActiveTab(selectedTab);
-
-	//customize
-	gTabs->setTabHeight(10);
-	//gTabs->setTabWidth(80);
-
-	//--
-
-#ifdef INCLUDE_GUI_EXTENDED
-#ifdef INCLUDE_FX_MASK
-	auto g = gTab3->getGroup(params_Mask.getName());
-	auto g1 = g->getGroup(frag1.parameters.getName());
-	auto g2 = g->getGroup(frag2.parameters.getName());
-	auto g3 = g->getGroup(frag3.parameters.getName());
-	g->getControl(ENABLE_FX_MASK.getName())->setConfig(jButton_BIG);
-	g1->getControl("ENABLE")->setConfig(jButton_BIG);
-	g2->getControl("ENABLE")->setConfig(jButton_BIG);
-	g3->getControl("ENABLE")->setConfig(jButton_BIG);
-	//g1->setConfig(true);
-#endif
-#endif
-
-	//--
-
-	//TODO:
-	//theme
-	loadTheme(path_Theme);
-#endif
 }
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::guiSetupStyles()
 {
-#ifdef INCLUDE_GUI_EXTENDED
-
-	//define json widgets settings
-
-	//hidden group header
-	jNoHead =
-	{
-		//{"show-header",true}
-		{"show-header",false}
-	};
-
-	//big buttons
-	jButton_BIG =
-	{
-		//{"fill-color", "rgba(128,128,128,0.4)" },
-		{"height", 35},
-		{"text-align", "center"},
-		{"type", "fullsize"}
-	};
-	jButton_BIG_L =
-	{
-		//{"fill-color", "rgba(128,128,128,0.4)" },
-		{"height", 35},
-		{"text-align", "left"},
-		{"type", "fullsize"}
-	};
-
-	//TODO:
-	//big sliders (for mixer channel selector)
-	jSlider_BIG =
-	{
-		{"height", 40}
-	};
-
-#endif
 }
 //--------------------------------------------------------------
 void ofxSurfingMixer::guiSetup()
 {
-
-#ifdef INCLUDE_GUI_EXTENDED
-
-	guiSetupStyles();
-
-	//---
-
-	//build gui
-
-	panel_MIXER = gui.addGroup("panel_MIXER", jNoHead);
-
-	gUser = panel_MIXER->addGroup(params_UserGui, jNoHead);
-
-	//--
-
-	//modes tabs
-
-	gTabs = panel_MIXER->addTabs("_tabs_");
-	gTab1 = gTabs->addGroup("1 BLEND");
-	gTab2 = gTabs->addGroup("2 MIXER");
-	gTab3 = gTabs->addGroup("3 MASK");
-
-	//--
-
-	//1. blend
-
-	//tab1
-
-	gTab1->addGroup(params_Blend, jNoHead);
-
-	//--
-
-	//2. mixer
-
-	//tab2
-
-	////simple gui
-	////sliders = gui.addContainer("vertical sliders", ofJson({ {"direction", "horizontal"} }));
-	//ofxGuiContainer* sliders;
-	//sliders = gTab2->addContainer("vertical sliders", ofJson({ {"direction", "horizontal"} }));
-	//float sldW = 20;
-	//float sldH = 120;
-	//ofJson cSldV =
-	//{
-	//	{"width", sldW}, {"height", sldH}
-	//};
-	//sliders->add(mixerGpu.channels[1]->parameterGroup.get("OPACITY"), cSldV);
-	//sliders->add(mixerGpu.channels[2]->parameterGroup.get("OPACITY"), cSldV);
-	////sliders->add(slider1Val.set("slider1", 1. / 7., 0, 1), cSldV);
-	//sliders->add(slider2Val.set("slider2", 5. / 7., 0, 1), cSldV);
-	//sliders->add(slider3Val.set("slider3", 4. / 7., 0, 1), cSldV);
-	//sliders->add(slider4Val.set("slider4", 6. / 7., 0, 1), cSldV);
-	//gTab2->add(slider4Val.set("slider4", 6. / 7., 0, 1), cSldV);
-
-	//--
-
-	//separated groups
-
-	gTab2->addGroup(mixerGpu.getParameterGroupPreview());//preview
-	gTab2->addGroup(mixerGpu.getParameterGroupChannel(0));//ch0
-
-	g10 = gTab2->addGroup();//ch1
-	g10->setName("CHANNEL 1");
-	g11 = g10->addGroup();
-	g11->add(mixerGpu.getParameterGroupChannelBlend(1));
-	g12 = g10->addGroup();
-	g12->add(mixerGpu.getParameterGroupChannelTint(1));
-	g12->minimize();
-
-	g20 = gTab2->addGroup();//ch2
-	g20->setName("CHANNEL 2");
-	g21 = g20->addGroup();
-	g21->add(mixerGpu.getParameterGroupChannelBlend(2));
-	g22 = g20->addGroup();
-	g22->add(mixerGpu.getParameterGroupChannelTint(2));
-	g22->minimize();
-
-	//--
-
-	//3. masker
-
-	//black and white fx helpers
-#ifdef INCLUDE_FX_MASK
-	gTab3->addGroup(params_Mask, jNoHead);
-#endif
-
-#endif
 }
 
 //--------------------------------------------------------------
@@ -1669,9 +1485,6 @@ void ofxSurfingMixer::updateMixer()
 }
 
 
-#pragma mark - OF
-
-
 //--------------------------------------------------------------
 void ofxSurfingMixer::setup()
 {
@@ -1917,9 +1730,6 @@ void ofxSurfingMixer::exit()
 
 	//-
 
-#ifdef INCLUDE_GUI_EXTENDED
-	gTabs->getActiveTabIndex().removeListener(this, &ofxSurfingMixer::Changed_tabGui);
-#endif
 
 	//-
 
@@ -1965,8 +1775,6 @@ void ofxSurfingMixer::setLogLevel(ofLogLevel level)
 	ofSetLogLevel("ofxSurfingMixer", level);
 }
 
-
-#pragma mark - OF LISTENERS
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::windowResized(int w, int h)
@@ -2361,8 +2169,6 @@ void ofxSurfingMixer::removeMouseListeners()
 }
 
 
-#pragma mark - API
-
 //--------------------------------------------------------------
 void ofxSurfingMixer::setActive(bool b)
 {
@@ -2467,8 +2273,6 @@ void ofxSurfingMixer::setGuiVisible(bool b)
 	//gui.getVisible().set(b);
 }
 
-
-#pragma mark - CALLBACKS
 
 //addon params
 //--------------------------------------------------------------
@@ -2837,8 +2641,6 @@ void ofxSurfingMixer::setKey_MODE_App(int k)
 }
 
 
-#pragma mark - FILE SETTINGS
-
 //--------------------------------------------------------------
 void ofxSurfingMixer::setPathGlobal(std::string s)//must call before setup. disabled by default
 {
@@ -2880,43 +2682,6 @@ void ofxSurfingMixer::guiRefresh()
 
 		//--
 
-#ifdef INCLUDE_GUI_EXTENDED
-		//if (0)
-		{
-			auto gPrv = gTab2->getGroup("PREVIEW");
-			auto gCh0 = gTab2->getGroup("BACKGROUND");
-			auto gCh1 = gTab2->getGroup("CHANNEL 1");
-			auto gCh2 = gTab2->getGroup("CHANNEL 2");
-
-			//minimize all
-			//gPrv->setHidden(true);
-			gCh0->setHidden(true);
-			gCh1->setHidden(true);
-			gCh2->setHidden(true);
-
-			//gPrv->setHidden(false);
-
-			////maximize selected channel
-			switch (mixerGpu.channelSelect.get())
-			{
-			case 0:
-				gCh0->setHidden(false);
-				break;
-			case 1:
-				gCh1->setHidden(false);
-				break;
-			case 2:
-				gCh2->setHidden(false);
-				break;
-			default:
-				break;
-			}
-
-			////minimize Tint
-			//g12->minimize();
-		//	//g22->minimize();
-		}
-#endif
 
 		//--
 
@@ -3061,36 +2826,6 @@ void ofxSurfingMixer::drawPreviewsCheckerboard(float x, float y, float width, fl
 	ofPopMatrix();
 	ofPopStyle();
 }
-
-#ifdef INCLUDE_GUI_EXTENDED
-//--------------------------------------------------------------
-void ofxSurfingMixer::Changed_tabGui(int & p)
-{
-	if (!DISABLE_Callbacks)
-	{
-		ofLogNotice(__FUNCTION__) << p;
-
-		selectedTab = p;
-
-		//workflow
-		if (selectedTab == 0)
-		{
-			ENABLE_BLEND = true;
-			MODE_AppMixer = 1;
-		}
-		else if (selectedTab == 1)
-		{
-			ENABLE_MIXER = true;
-			MODE_AppMixer = 2;
-		}
-		else if (selectedTab == 2)
-		{
-			ENABLE_MASK = true;
-			MODE_AppMixer = 3;
-		}
-	}
-}
-#endif
 
 #ifdef INCLUDE_FX_MASK
 //--------------------------------------------------------------

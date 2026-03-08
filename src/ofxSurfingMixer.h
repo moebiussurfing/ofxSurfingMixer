@@ -19,12 +19,7 @@
 //	+	allow one channel enable/preview without broke mixing
 
 
-//#define INCLUDE_GUI_EXTENDED
-#ifdef INCLUDE_GUI_EXTENDED
-#include "ofxGuiExtended2.h"
-#endif
-
-#define INCLUDE_ofxGui //TODO: this is for a lite version usign the tiny ofxGui...
+#define INCLUDE_ofxGui
 #ifdef INCLUDE_ofxGui
 #include "ofxGui.h"
 #endif
@@ -75,7 +70,6 @@ class ofxSurfingMixer : public ofBaseApp
 {
 
 public:
-#pragma mark - OF
 
 	ofxSurfingMixer();
 	~ofxSurfingMixer();
@@ -112,66 +106,6 @@ public:
 	//--
 
 private:
-#ifdef INCLUDE_GUI_EXTENDED
-	ofxGui gui;
-	ofxGuiGroup2 *panel_MIXER;
-	ofxGuiGroup2* gUser;
-
-	ofJson jButton_BIG;
-	ofJson jButton_BIG_L;
-	ofJson jSlider_BIG;
-	ofJson jNoHead;
-
-	//-
-
-private:
-	std::string path_Theme;
-
-public:
-	//--------------------------------------------------------------
-	void loadTheme(std::string _path) {
-		path_Theme = _path;
-		ofLogNotice(__FUNCTION__) << "loadTheme: " << path_Theme;
-		panel_MIXER->loadTheme(path_Theme);
-#ifdef USE_OFX_SURFING_FX
-		FX_Processor.loadTheme(path_Theme);
-#endif
-	}
-
-	//-
-
-	ofxGuiContainer* sliders;
-	ofParameter <float> slider1Val, slider2Val, slider3Val, slider4Val;
-
-	ofxGuiTabs* gTabs;
-	ofxGuiGroup2* gTab1;
-	ofxGuiGroup2* gTab2;
-	ofxGuiGroup2* gTab3;
-
-	const int NUM_TABS = 3;
-	void Changed_tabGui(int & p);
-	ofParameter<int> selectedTab;// { "TAB", 0, 0, NUM_TABS - 1 };
-	int selectedTab_PRE = -1;
-
-	//TODO:
-	//toggle selector..
-	ofParameter<bool> bCh0{ "CH0", false };
-	ofParameter<bool> bCh1{ "CH1", false };
-	ofParameter<bool> bCh2{ "CH2", false };
-
-	//TODO:
-	ofParameterGroup gCh1Mix{ "CHANNEL 1" };
-	ofParameterGroup gCh2Mix{ "CHANNEL 2" };
-
-	ofxGuiGroup2* g10;//ch1
-	ofxGuiGroup2* g11;//blend
-	ofxGuiGroup2* g12;//tint
-	ofxGuiGroup2* g20;//ch2
-	ofxGuiGroup2* g21;//blend
-	ofxGuiGroup2* g22;//tint
-
-#endif
-
 	//-
 
 	bool bGuiAdv = false;
@@ -299,16 +233,16 @@ private:
 
 	//-
 
-	//params
+	// params
 
 private:
 
-	//control
+	// control
 	ofParameter<bool> ENABLE_FboFxHelper{ "ENABLE FX", true };
 	ofParameter<bool> MODE_SHOW_FboFxHelper{ "SHOW FX", false };
 	ofParameter<bool> MODE_PRESET_MIXER{ "MIXER PRESETS", false };
 
-	//1. blend
+	// 1. blend
 	ofParameterGroup params_Blend{ "MODE BLEND" };
 	ofParameter<bool> ENABLE_BLEND{ "ENABLE MODE BLEND", false };
 	ofParameter<bool> SHOW_Preview{ "SHOW PREVIEW", true };
@@ -318,7 +252,7 @@ private:
 	ofParameter<int> blendMode{ "BLEND MODE", 0, 0, 24 };
 	ofParameter<std::string> blendName{ "", "" };
 
-	//3. mask
+	// 3. mask
 	ofParameterGroup params_Mask{ "MODE MASK" };
 	ofParameter<bool> ENABLE_MASK{ "ENABLE MODE MASK", false };
 
@@ -381,7 +315,6 @@ public:
 
 	//------------------------------------------------------------------------------
 
-#pragma mark - API
 
 	void setActive(bool b);
 	//--------------------------------------------------------------
@@ -451,7 +384,6 @@ private:
 
 	//-
 
-#pragma mark - INTERNAL PARAMS
 private:
 
 	ofParameterGroup params_Internal;
@@ -471,13 +403,11 @@ private:
 
 	//-
 
-#pragma mark - CALLBACKS
 private:
 
 	void Changed_params_Settings(ofAbstractParameter &e);
 	void Changed_params_AppSession(ofAbstractParameter &e);
 
-#pragma mark - OF LISTENERS
 private:
 
 	//keys
@@ -495,7 +425,6 @@ private:
 
 	//-
 
-#pragma mark - FILE SETTINGS
 private:
 
 	//path folder and filenames
