@@ -24,7 +24,7 @@
 #include "ofxGuiExtended2.h"
 #endif
 
-//#define INCLUDE_ofxGui //TODO: this is for a lite version usign the tiny ofxGui...
+#define INCLUDE_ofxGui //TODO: this is for a lite version usign the tiny ofxGui...
 #ifdef INCLUDE_ofxGui
 #include "ofxGui.h"
 #endif

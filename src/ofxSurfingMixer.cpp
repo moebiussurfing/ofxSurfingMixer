@@ -1574,10 +1574,10 @@ void ofxSurfingMixer::drawGui()
 {
 	//ofLogNotice(__FUNCTION__);
 
-	if (SHOW_GuiAll)
+	if (1)
 	{
 		//blend and mask
-		if (SHOW_MIXER)
+		if (1)
 		{
 			if (bGuiAdv)
 			{
@@ -1590,7 +1590,7 @@ void ofxSurfingMixer::drawGui()
 		//-
 
 		//preview monitors
-		if (SHOW_Preview)
+		if (1)
 		{
 			drawPreviews(preview_Position.get().x, preview_Position.get().y, window_W / 9.0f);
 		}
@@ -1599,7 +1599,7 @@ void ofxSurfingMixer::drawGui()
 
 		//mixer
 #ifdef INCLUDE_MIXER_MODE
-		if (ENABLE_MIXER && SHOW_MIXER && bGuiAdv)
+		if (1)
 		{
 
 			//gui internal
@@ -1619,7 +1619,7 @@ void ofxSurfingMixer::drawGui()
 		//---
 
 		//help info:
-		if (SHOW_Help)
+		if (1)
 		{
 			float w = ofxSurfingHelpers::getWidthBBtextBoxed(myFontHelp, helpInfo);
 			float h = ofxSurfingHelpers::getHeightBBtextBoxed(myFontHelp, helpInfo);
