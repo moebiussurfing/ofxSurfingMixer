@@ -8,18 +8,18 @@
 	#include "ofxGui.h"
 #endif
 
-// 1. blend
+// 1. Blend
 #define INCLUDE_BLEND_MODE
 #ifdef INCLUDE_BLEND_MODE
 	#include "ofxPSBlend.h"
 #endif
 
-// 2. mixer
+// 2. Mixer
 #include "ofxGpuMixer.h"
 
 //app modes
 #define NUM_MODES_APP 3
-//we can handle many app modes to change behaviour
+//we can handle many app modes to change behavior
 
 #include "ofxSurfingHelpers.h"
 
@@ -153,8 +153,8 @@ private:
 	ofParameter<bool> bEnableMixer { "ENABLE MODE MIXER", false };
 
 	ofParameterGroup params_Backgrounds { "BACKGROUNDS" };
-	ofParameter<bool> ENABLE_Channel1 { "CHANNEL 1", true };
-	ofParameter<bool> ENABLE_Channel2 { "CHANNEL 2", true };
+	ofParameter<bool> bEnableChannel1 { "CHANNEL 1", true };
+	ofParameter<bool> bEnableChannel2 { "CHANNEL 2", true };
 	ofParameter<bool> bEnableBg1 { "BG1", true };
 	ofParameter<bool> bEnableBg2 { "BG2", true };
 	ofParameter<bool> bEnableBgMix { "BG MIX", true };
@@ -211,17 +211,7 @@ public:
 	}
 	void setGuiVisible(bool b);
 
-	//TODO:
-	//--------------------------------------------------------------
-	void setUserVisible(bool b) {
-	}
-
 	//--
-
-	//presets loaders
-	//--------------------------------------------------------------
-	void loadPreset_blend(int p) {
-	}
 
 	void setLogLevel(ofLogLevel level);
 	void setKey_MODE_App(int k);
@@ -235,17 +225,16 @@ public:
 	//--
 
 private:
-	int key_MODE_AppMixer = OF_KEY_TAB; //default key to switch MODE_AppMixer
 	int window_W, window_H;
 
-	//autosave
+	// autosave
 	ofParameter<bool> bEnableAutosave;
 	uint64_t timerLast_Autosave = 0;
 	int timeToAutosave = 10000; //10 secs
 
-	//updating some params before save will trigs also the group callbacks
-	//so we disable this callbacks just in case params updatings are required
-	//in this case we will need to update gui position param
+	// updating some params before save will trigs also the group callbacks
+	// so we disable this callbacks just in case params updatings are required
+	// in this case we will need to update gui position param
 	bool bDisableCallbacks = false;
 
 	//-
@@ -259,7 +248,7 @@ private:
 	ofParameter<std::string> MODE_AppMixer_Name;
 
 #ifdef INCLUDE_ofxGui
-	ofxPanel gui_Control;
+	ofxPanel gui;
 #endif
 
 	//-
@@ -269,13 +258,13 @@ private:
 	void Changed_params_AppSession(ofAbstractParameter & e);
 
 private:
-	//keys
+	// keys
 	void keyPressed(ofKeyEventArgs & eventArgs);
 	void keyReleased(ofKeyEventArgs & eventArgs);
 	void addKeysListeners();
 	void removeKeysListeners();
 
-	//mouse
+	// mouse
 	void mouseDragged(ofMouseEventArgs & eventArgs);
 	void mousePressed(ofMouseEventArgs & eventArgs);
 	void mouseReleased(ofMouseEventArgs & eventArgs);
@@ -285,7 +274,7 @@ private:
 	//-
 
 private:
-	//path folder and filenames
+	// path folder and filenames
 	std::string path_GLOBAL;
 	std::string path_Params_AppSession;
 	std::string path_Params_Preset;
@@ -296,7 +285,7 @@ private:
 
 	void guiRefresh();
 
-	//labels
+	// labels
 	ofTrueTypeFont myFont;
 	ofTrueTypeFont myFontHelp;
 	ofTrueTypeFont myFontSmall;
@@ -304,5 +293,5 @@ private:
 	int sizeTTF;
 
 	void drawPreviewsCheckerboard(float x, float y, float width, float height, float size);
-	//TODO:could improve performance cpu using fbo or loaded image..
+	//TODO: could improve performance cpu using fbo or loaded image...
 };
