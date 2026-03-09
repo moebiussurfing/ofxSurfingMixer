@@ -51,7 +51,6 @@ void ofApp::draw() {
 - ofxSurfingMixer
 - ofxGui
 - ofxSceneTEST -> FOR TESTING ONLY
-- ofxSurfingHelpers
 
 ## Tested systems
 - **Windows10** / **VS2026** / **OF 0.12.1**

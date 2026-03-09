@@ -16,7 +16,7 @@ ofxSurfingMixer::ofxSurfingMixer() {
 
 	//--
 
-	// UI text
+	// UI text preview window
 
 	// Labels font
 	bool bLoaded;
@@ -501,7 +501,6 @@ void ofxSurfingMixer::begin_Mix() {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::end_Mix() {
-	//ofLogVerbose(__FUNCTION__) << "end_Mix";
 	//ofLogVerbose(__FUNCTION__) << "---------------------------------------";
 
 	//--
