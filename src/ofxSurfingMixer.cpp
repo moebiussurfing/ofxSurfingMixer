@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 ofxSurfingMixer::ofxSurfingMixer() {
-	DISABLE_Callbacks = true;
+	bDisableCallbacks = true;
 
 	// path for settings
 	setPathGlobal("ofxSurfingMixer/");
@@ -40,46 +40,6 @@ ofxSurfingMixer::ofxSurfingMixer() {
 		ofLogNotice(__FUNCTION__) << "LOADED FILE '" << myTTF << "'";
 	else
 		ofLogError(__FUNCTION__) << "FILE '" << myTTF << "' NOT FOUND!";
-
-	//-
-
-	//build help
-	helpInfo = "HELP\nofxSurfingMixer";
-	helpInfo += "\n\n";
-	helpInfo += "H                 SHOW HELP";
-	helpInfo += "\n";
-	helpInfo += "G                 SHOW GUI";
-	helpInfo += "\n";
-	helpInfo += "F1                SHOW GUI";
-	helpInfo += "\n";
-	helpInfo += "F2                SHOW PREVIEWS";
-	helpInfo += "\n";
-	helpInfo += "F3                SHOW PRESETS";
-	helpInfo += "\n";
-	helpInfo += "\n";
-	helpInfo += " <|>              BLEND TYPE";
-	helpInfo += "\n";
-	helpInfo += "TAB               MODE BLEND-MIX";
-	helpInfo += "\n";
-	helpInfo += "TAB+Ctrl          MODE FX";
-	helpInfo += "\n";
-	helpInfo += "/                 SWAP CHANNELS";
-	helpInfo += "\n";
-	helpInfo += "K+Ctrl            ENABLE KEYS";
-	helpInfo += "\n";
-	helpInfo += "J                 LOAD THEME";
-	helpInfo += "\n";
-	helpInfo += "\n";
-	helpInfo += "MODE MIXER";
-	helpInfo += "\n";
-	helpInfo += " <|>              BLEND TYPE";
-	helpInfo += "\n";
-	helpInfo += "up|down           CHANNEL";
-	helpInfo += "\n";
-	helpInfo += "S                 SOLO";
-	helpInfo += "\n";
-	helpInfo += "\n";
-	helpInfo += "\n";
 }
 
 //--------------------------------------------------------------
@@ -87,18 +47,18 @@ void ofxSurfingMixer::reallocate(int w, int h) {
 	//TODO:
 	//ofEnableArbTex();
 
-	//fbo settings
+	// fbo settings
 	ofFbo::Settings settings;
 	settings.width = w;
 	settings.height = h;
 	settings.internalformat = GL_RGBA;
 
-	//allocate
+	// allocate
 	fbo_Input_1.allocate(settings);
 	fbo_Input_2.allocate(settings);
 	fbo_MixOut.allocate(settings);
 
-	//clear fbo's
+	// clear fbo's
 	fbo_Input_1.begin();
 	ofClear(0, 255);
 	fbo_Input_1.end();
@@ -114,7 +74,6 @@ void ofxSurfingMixer::reallocate(int w, int h) {
 	//-
 
 	// mixer
-#ifdef INCLUDE_MIXER_MODE
 	fbo_Mixer_A.allocate(settings);
 	fbo_Mixer_B.allocate(settings);
 
@@ -125,7 +84,6 @@ void ofxSurfingMixer::reallocate(int w, int h) {
 	fbo_Mixer_B.begin();
 	ofClear(0, 255);
 	fbo_Mixer_B.end();
-#endif
 
 	//--
 
@@ -145,11 +103,9 @@ void ofxSurfingMixer::resizeFbos(int w, int h) {
 	fbo_MixOut.allocate(w, h);
 
 	//mixer
-#ifdef INCLUDE_MIXER_MODE
 	//fbo_Mixer_A.allocate(w, h);//BUG:
 	//fbo_Mixer_B.allocate(w, h);
 	mixerGpu.fboMix.allocate(w, h);
-#endif
 
 	//--
 }
@@ -167,7 +123,7 @@ void ofxSurfingMixer::guiSetup() {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::setupParamsInternal() {
-	preview_Position.set("preview_Position",
+	positionPreview.set("positionPreview",
 		glm::vec2(5, 5),
 		glm::vec2(0, 0),
 		glm::vec2(window_W, window_H));
@@ -177,32 +133,28 @@ void ofxSurfingMixer::setupParamsInternal() {
 	// internal
 
 	// params
-	MODE_Active.set("ACTIVE", true);
-	ENABLE_keys_AllMixer.set("KEYS", true);
-	SHOW_Help.set("HELP", true);
+	bModeActive.set("ACTIVE", true);
 	MODE_AppMixer.set("MIXER MODE", 1, 1, NUM_MODES_APP);
 	MODE_AppMixer_Name.set("", "");
 	MODE_AppMixer_Name.setSerializable(false);
 	//ENABLE_Debug.set("DEBUG", true);
-	ENABLE_AutoSave.set("AUTO SAVE", false);
-	SHOW_GuiAll.set("GUI", true);
-	SHOW_MIXER.set("SHOW_MIXER", true);
+	bEnableAutosave.set("AUTO SAVE", false);
+	bGui.set("GUI", true);
 
 	// params internal
 	params_Internal.setName("INTERNAL");
 	params_Internal.add(MODE_AppMixer);
 	params_Internal.add(MODE_AppMixer_Name);
-	params_Internal.add(SHOW_GuiAll);
-	params_Internal.add(MODE_Active);
-	params_Internal.add(ENABLE_keys_AllMixer);
-	params_Internal.add(ENABLE_AutoSave);
+	params_Internal.add(bGui);
+	params_Internal.add(bModeActive);
+	params_Internal.add(bEnableAutosave);
 
 #ifdef INCLUDE_ofxGui
-	Gui_Position.set("GUI POSITION",
+	positionGui.set("GUI POSITION",
 		glm::vec2(window_W * 0.5, window_H * 0.5),
 		glm::vec2(0, 0),
 		glm::vec2(window_W, window_H));
-	params_Internal.add(Gui_Position);
+	params_Internal.add(positionGui);
 #endif
 
 	//-
@@ -212,15 +164,12 @@ void ofxSurfingMixer::setupParamsInternal() {
 	params_UserGui.add(MODE_AppMixer_Name);
 	params_UserGui.add(ENABLE_Channel1);
 	params_UserGui.add(ENABLE_Channel2);
-	params_UserGui.add(SHOW_Preview);
-	params_UserGui.add(SHOW_Backgrounds);
-	params_UserGui.add(swapChannels);
+	params_UserGui.add(bShowPreview);
+	params_UserGui.add(bShowBackgrounds);
+	params_UserGui.add(bSwapChannels);
 	//params_UserGui.add(swapInfo);
 
-	MODE_PRESET_MIXER = false;
-
-	ENABLE_FboFxHelper = false;
-	MODE_SHOW_FboFxHelper = false;
+	bEnableFx = false;
 
 	//--
 
@@ -234,24 +183,14 @@ void ofxSurfingMixer::setupParamsInternal() {
 void ofxSurfingMixer::setupParamsMixer() {
 	// 1. blend
 
-	//params_Blend.add(ENABLE_BLEND);
+	//params_Blend.add(bEnableBlend);
 	params_Blend.add(blendName);
 	params_Blend.add(blendMode);
-
-#ifdef BLEND_TOGGLES
-	ENABLE_Blends.clear();
-	ENABLE_Blends.resize(psBlend.getNumBlends());
-	for (int i = 0; i < ENABLE_Blends.size(); i++) {
-		ENABLE_Blends[i].set(psBlend.getBlendMode(i), false);
-		params_Blend.add(ENABLE_Blends[i]);
-	}
-#endif
 
 	//--
 
 	// 2. mixer
 
-#ifdef INCLUDE_MIXER_MODE
 	colorBackground.set("BACKGROUND", ofColor(255, 0, 0), ofColor(0, 0, 0), ofColor(255, 255, 255));
 	//tex_Mixer_B = fbo_Mixer_B.getTexture(); // adding a texture insted of a fbo
 	colorChannel.setup(colorBackground.getName(), colorBackground.get(), ofGetWidth(), ofGetHeight());
@@ -267,8 +206,6 @@ void ofxSurfingMixer::setupParamsMixer() {
 	// different from guiSetup() bc there are for gui only
 	params_Mixer.add(mixerGpu.getParameterGroup());
 	params_Mixer.add(colorBackground);
-#endif
-
 	mixerGpu.reset();
 
 	//--
@@ -277,12 +214,12 @@ void ofxSurfingMixer::setupParamsMixer() {
 	params_Backgrounds.add(colorBg1);
 	params_Backgrounds.add(colorBg2);
 	params_Backgrounds.add(colorBgMix);
-	params_Backgrounds.add(ENABLE_Bg1);
-	params_Backgrounds.add(ENABLE_Bg2);
-	params_Backgrounds.add(ENABLE_BgMix);
-	params_Backgrounds.add(RESET_Backgrounds);
+	params_Backgrounds.add(bEnableBg1);
+	params_Backgrounds.add(bEnableBg2);
+	params_Backgrounds.add(bEnableBgMix);
+	params_Backgrounds.add(bResetBackgrounds);
 
-	RESET_Backgrounds.setSerializable(false);
+	bResetBackgrounds.setSerializable(false);
 
 	//params_Blend.add(params_Backgrounds);
 
@@ -298,11 +235,11 @@ void ofxSurfingMixer::setupParamsMixer() {
 	params_Control.setName("Control");
 	params_Control.add(ENABLE_Channel1);
 	params_Control.add(ENABLE_Channel2);
-	params_Control.add(swapChannels);
-	params_Control.add(SHOW_Backgrounds);
+	params_Control.add(bSwapChannels);
+	params_Control.add(bShowBackgrounds);
 	params_Control.add(swapInfo);
-	params_Control.add(ENABLE_BLEND);
-	params_Control.add(ENABLE_MIXER);
+	params_Control.add(bEnableBlend);
+	params_Control.add(bEnableMixer);
 	params_Basic.add(params_Control);
 
 	// modes
@@ -318,8 +255,8 @@ void ofxSurfingMixer::setupParamsMixer() {
 // PRE-channel1
 //--------------------------------------------------------------
 void ofxSurfingMixer::begin_PRE_Channel_1() {
-	if (ENABLE_FboFxHelper) {
-	} else if (!ENABLE_FboFxHelper) // bypass fx
+	if (bEnableFx) {
+	} else if (!bEnableFx) // bypass fx
 	{
 		begin_Channel_1();
 	}
@@ -327,12 +264,12 @@ void ofxSurfingMixer::begin_PRE_Channel_1() {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::end_PRE_Channel_1() {
-	if (ENABLE_FboFxHelper) {
+	if (bEnableFx) {
 		begin_Channel_1();
 		end_Channel_1();
 	}
 
-	else if (!ENABLE_FboFxHelper) // bypass fx
+	else if (!bEnableFx) // bypass fx
 	{
 		end_Channel_1();
 	}
@@ -344,8 +281,8 @@ void ofxSurfingMixer::end_PRE_Channel_1() {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::begin_PRE_Channel_2() {
-	if (ENABLE_FboFxHelper) {
-	} else if (!ENABLE_FboFxHelper) //bypass fx
+	if (bEnableFx) {
+	} else if (!bEnableFx) //bypass fx
 	{
 		begin_Channel_2();
 	}
@@ -357,13 +294,13 @@ void ofxSurfingMixer::setToggleFX(bool b) {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::end_PRE_Channel_2() {
-	if (ENABLE_FboFxHelper) {
+	if (bEnableFx) {
 		begin_Channel_2();
 
 		end_Channel_2();
 	}
 
-	else if (!ENABLE_FboFxHelper) //bypass fx
+	else if (!bEnableFx) //bypass fx
 	{
 		end_Channel_2();
 	}
@@ -378,15 +315,14 @@ void ofxSurfingMixer::begin_Channel_1() {
 
 	//--
 
-	if (ENABLE_BLEND) {
+	if (bEnableBlend) {
 		fbo_Input_1.begin();
 	}
 
 	//--
 
-#ifdef INCLUDE_MIXER_MODE
-	if (ENABLE_MIXER) {
-		if (!swapChannels) {
+	if (bEnableMixer) {
+		if (!bSwapChannels) {
 			if (ENABLE_Channel1)
 				fbo_Mixer_A.begin();
 		} else {
@@ -394,12 +330,11 @@ void ofxSurfingMixer::begin_Channel_1() {
 				fbo_Mixer_B.begin();
 		}
 	}
-#endif
 
 	//--
 
 	// background
-	if (ENABLE_Bg1) {
+	if (bEnableBg1) {
 		ofClear(colorBg1);
 	}
 }
@@ -412,15 +347,14 @@ void ofxSurfingMixer::end_Channel_1() {
 
 	//--
 
-	if (ENABLE_BLEND) {
+	if (bEnableBlend) {
 		fbo_Input_1.end();
 	}
 
 	//--
 
-#ifdef INCLUDE_MIXER_MODE
-	if (ENABLE_MIXER) {
-		if (!swapChannels) {
+	if (bEnableMixer) {
+		if (!bSwapChannels) {
 			if (ENABLE_Channel1)
 				fbo_Mixer_A.end();
 		} else {
@@ -428,18 +362,17 @@ void ofxSurfingMixer::end_Channel_1() {
 				fbo_Mixer_B.end();
 		}
 	}
-#endif
 
 	//fbo_Input_1 update done
 
 	//----
 
 	// this mode do not requires process inside fbo's..
-	if (ENABLE_BLEND) {
+	if (bEnableBlend) {
 		//process
 
 #ifdef INCLUDE_BLEND_MODE
-		if (ENABLE_BLEND) {
+		if (bEnableBlend) {
 			//TODO:
 			//crash workaround...
 			bBlendRunning = true;
@@ -450,7 +383,7 @@ void ofxSurfingMixer::end_Channel_1() {
 #endif
 		//----
 
-		if (!swapChannels) {
+		if (!bSwapChannels) {
 			if (ENABLE_Channel1) {
 				fbo_Input_1.draw(0, 0);
 			}
@@ -463,7 +396,7 @@ void ofxSurfingMixer::end_Channel_1() {
 		//----
 
 #ifdef INCLUDE_BLEND_MODE
-		if (ENABLE_BLEND) {
+		if (bEnableBlend) {
 			psBlend.end();
 		}
 #endif
@@ -477,16 +410,15 @@ void ofxSurfingMixer::end_Channel_1() {
 void ofxSurfingMixer::begin_Channel_2() {
 	//ofLogVerbose(__FUNCTION__) << "begin_Channel_2";
 
-	if (ENABLE_BLEND) {
+	if (bEnableBlend) {
 		//blend target
 		fbo_Input_2.begin();
 	}
 
 	//--
 
-#ifdef INCLUDE_MIXER_MODE
-	if (ENABLE_MIXER) {
-		if (!swapChannels) {
+	if (bEnableMixer) {
+		if (!bSwapChannels) {
 			if (ENABLE_Channel2)
 				fbo_Mixer_B.begin();
 		} else {
@@ -494,11 +426,10 @@ void ofxSurfingMixer::begin_Channel_2() {
 				fbo_Mixer_A.begin();
 		}
 	}
-#endif
 
 	//--
 
-	if (ENABLE_Bg2) {
+	if (bEnableBg2) {
 		ofClear(colorBg2);
 	}
 }
@@ -509,15 +440,14 @@ void ofxSurfingMixer::end_Channel_2() {
 
 	//ofLogVerbose(__FUNCTION__) << "end_Channel_2";
 
-	if (ENABLE_BLEND) {
+	if (bEnableBlend) {
 		fbo_Input_2.end();
 	}
 
 	//--
 
-#ifdef INCLUDE_MIXER_MODE
-	if (ENABLE_MIXER) {
-		if (!swapChannels) {
+	if (bEnableMixer) {
+		if (!bSwapChannels) {
 			if (ENABLE_Channel2) fbo_Mixer_B.end();
 		} else {
 			if (ENABLE_Channel1) fbo_Mixer_A.end();
@@ -525,7 +455,6 @@ void ofxSurfingMixer::end_Channel_2() {
 
 		//fbo_Mixer_B.end();
 	}
-#endif
 }
 
 //--
@@ -543,7 +472,7 @@ void ofxSurfingMixer::begin_Mix() {
 	//-
 
 	//background
-	if (ENABLE_BgMix) {
+	if (bEnableBgMix) {
 		ofClear(colorBgMix);
 	}
 
@@ -556,8 +485,8 @@ void ofxSurfingMixer::begin_Mix() {
 	// 1. blend
 
 #ifdef INCLUDE_BLEND_MODE
-	if (ENABLE_BLEND) {
-		if (!swapChannels) {
+	if (bEnableBlend) {
+		if (!bSwapChannels) {
 			if (ENABLE_Channel2) psBlend.draw(fbo_Input_2.getTextureReference(), blendMode);
 		} else {
 			if (ENABLE_Channel1) psBlend.draw(fbo_Input_1.getTextureReference(), blendMode);
@@ -577,8 +506,7 @@ void ofxSurfingMixer::end_Mix() {
 
 	// 2. mixer
 
-#ifdef INCLUDE_MIXER_MODE
-	if (ENABLE_MIXER) {
+	if (bEnableMixer) {
 		ofSetColor(255);
 
 		//raw draw
@@ -587,7 +515,6 @@ void ofxSurfingMixer::end_Mix() {
 		//fliped draw
 		//mixerGpu.drawFbo(0, 0, ofGetWidth(), ofGetHeight());
 	}
-#endif
 
 	//--
 
@@ -600,17 +527,15 @@ void ofxSurfingMixer::drawMixer() {
 	//--
 
 #ifdef INCLUDE_BLEND_MODE
-	if (ENABLE_BLEND) {
+	if (bEnableBlend) {
 		fbo_MixOut.draw(0, 0, ofGetWidth(), ofGetHeight());
 	}
 #endif
 
-#ifdef INCLUDE_MIXER_MODE
-	if (ENABLE_MIXER) {
+	if (bEnableMixer) {
 		ofSetColor(255);
 		fbo_MixOut.draw(0, 0, ofGetWidth(), ofGetHeight());
 	}
-#endif
 }
 
 //--------------------------------------------------------------
@@ -619,7 +544,7 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 
 	int numScreens;
 
-	if (SHOW_Backgrounds)
+	if (bShowBackgrounds)
 		numScreens = 3;
 	else
 		numScreens = 2;
@@ -651,7 +576,7 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 
 	float xx0, xx1, xx2, xx3;
 	float yy0, yy1, yy2, yy3;
-	if (SHOW_Backgrounds) //3 monitors
+	if (bShowBackgrounds) //3 monitors
 	{
 		xx0 = pad + x;
 		yy0 = pad + y;
@@ -677,7 +602,7 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 	//ofPushMatrix();
 	ofSetColor(255);
 
-	if (SHOW_Backgrounds) myFont.drawString("BACKGROUNDS", xx0 + xLabel, yy0 + h + yLabel + 5);
+	if (bShowBackgrounds) myFont.drawString("BACKGROUNDS", xx0 + xLabel, yy0 + h + yLabel + 5);
 	myFont.drawString("CHANNEL 1", xx1 + xLabel, yy1 + h + yLabel + 5);
 	myFont.drawString("CHANNEL 2", xx2 + xLabel, yy2 + h + yLabel + 5);
 	//ofPopMatrix();
@@ -703,8 +628,7 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 	sizeBox = h / 20.0f;
 
 	//mixer
-#ifdef INCLUDE_MIXER_MODE
-	if (ENABLE_MIXER) {
+	if (bEnableMixer) {
 		//backgrounds
 		//1st half screen splitted by the 3 backgrounds. seccond half will be for channel 0
 
@@ -713,8 +637,8 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 		ofPushStyle();
 		ofFill();
 
-		if (SHOW_Backgrounds) {
-			if (ENABLE_Bg1) {
+		if (bShowBackgrounds) {
+			if (bEnableBg1) {
 				ofSetColor(colorBg1);
 				ofDrawRectangle(ofRectangle { xx0, yy0, wThird, h });
 			} else {
@@ -723,7 +647,7 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 			ofSetColor(255);
 			myFontSmall.drawString("BG1", xx0 + pad_xScreLb, yy0 + pad_yScreLb);
 
-			if (ENABLE_Bg2) {
+			if (bEnableBg2) {
 				ofSetColor(colorBg2);
 				ofDrawRectangle(ofRectangle { xx0 + wThird, yy0, wThird, h });
 			} else {
@@ -732,7 +656,7 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 			ofSetColor(255);
 			myFontSmall.drawString("BG2", xx0 + wThird + pad_xScreLb, yy0 + pad_yScreLb);
 
-			if (ENABLE_BgMix) //independent of swap channels
+			if (bEnableBgMix) //independent of swap channels
 			{
 				ofSetColor(colorBgMix);
 				ofDrawRectangle(ofRectangle { xx0 + 2 * wThird, yy0, wThird, h });
@@ -780,11 +704,10 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 
 		//fbo_MixOut.draw(xx3, yy3, w, h);
 	}
-#endif
 
 	//blender
 #ifdef INCLUDE_BLEND_MODE
-	if (ENABLE_BLEND) {
+	if (bEnableBlend) {
 		//backgrounds
 
 		wThird = w / 3.0f;
@@ -792,8 +715,8 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 		ofPushStyle();
 		ofFill();
 
-		if (SHOW_Backgrounds) {
-			if (ENABLE_Bg1) {
+		if (bShowBackgrounds) {
+			if (bEnableBg1) {
 				ofSetColor(colorBg1);
 				ofDrawRectangle(ofRectangle { xx0, yy0, wThird, h });
 			} else {
@@ -802,7 +725,7 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 			ofSetColor(255);
 			myFontSmall.drawString("BG1", xx0 + pad_xScreLb, yy0 + pad_yScreLb);
 
-			if (ENABLE_Bg2) {
+			if (bEnableBg2) {
 				ofSetColor(colorBg2);
 				ofDrawRectangle(ofRectangle { xx0 + wThird, yy0, wThird, h });
 			} else {
@@ -811,7 +734,7 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 			ofSetColor(255);
 			myFontSmall.drawString("BG2", xx0 + wThird + pad_xScreLb, yy0 + pad_yScreLb);
 
-			if (ENABLE_BgMix) //independent of swap channels
+			if (bEnableBgMix) //independent of swap channels
 			{
 				ofSetColor(colorBgMix);
 				ofDrawRectangle(ofRectangle { xx0 + 2 * wThird, yy0, wThird, h });
@@ -826,7 +749,7 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 
 		//-
 
-		if (!swapChannels) {
+		if (!bSwapChannels) {
 			if (ENABLE_Channel1) {
 				fbo_Input_1.draw(xx1, yy1, w, h);
 			}
@@ -870,14 +793,14 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 	//int yy = ofGetHeight() - (num * hh) - 5;//botom border
 	//int yy = y + h + 2 * pad - 7;//below monitor preview
 	int yy;
-	if (SHOW_Backgrounds)
+	if (bShowBackgrounds)
 		yy = yy0 + h + 2.5f * yLabel;
 	else
 		yy = yy1 + h + 2.5f * yLabel;
 
 	////channels swap
 	//std::string str1, str2;
-	//if (!swapChannels)
+	//if (!bSwapChannels)
 	//{
 	//	str1 = "CHANNEL1: " + nameChannel1;
 	//	str2 = "CHANNEL2: " + nameChannel2;
@@ -891,7 +814,7 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 	//ofDrawBitmapStringHighlight(str2, xx, yy + 2 * hh);
 
 	// mode
-	if (ENABLE_BLEND) {
+	if (bEnableBlend) {
 		string str = "";
 		str += "BLEND\t\t";
 		str += (blendMode.get() < 10 ? " " : "");
@@ -900,7 +823,7 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 		str += ofToUpper(blendName.get());
 		//ofDrawBitmapStringHighlight
 		myFont.drawString(str, xx0 + xLabel, yy);
-	} else if (ENABLE_MIXER) {
+	} else if (bEnableMixer) {
 		std::string str;
 		str = "MIXER\t\t";
 		str += "CH-" + ofToString(mixerGpu.channelSelect.get()) + "";
@@ -940,18 +863,7 @@ void ofxSurfingMixer::drawGui() {
 	//-
 
 	// preview monitors
-	drawPreviews(preview_Position.get().x, preview_Position.get().y, window_W / 9.0f);
-
-	//-
-
-	// mixer
-#ifdef INCLUDE_MIXER_MODE
-
-	// gui internal
-	#ifdef INCLUDE_ofxGui
-	gui_Mixer.draw();
-	#endif
-#endif
+	drawPreviews(positionPreview.get().x, positionPreview.get().y, window_W / 9.0f);
 
 	//---
 
@@ -969,8 +881,7 @@ void ofxSurfingMixer::updateMixer() {
 	//--
 
 	// mixer
-#ifdef INCLUDE_MIXER_MODE
-	if (ENABLE_MIXER) {
+	if (bEnableMixer) {
 		mixerGpu.update();
 
 		//easy callbacks
@@ -983,7 +894,6 @@ void ofxSurfingMixer::updateMixer() {
 			colorBackground = mixerGpu.getColorChannel0();
 		}
 	}
-#endif
 
 	//--
 
@@ -994,7 +904,7 @@ void ofxSurfingMixer::updateMixer() {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::setup() {
-	DISABLE_Callbacks = true;
+	bDisableCallbacks = true;
 
 	//--
 
@@ -1054,10 +964,10 @@ void ofxSurfingMixer::setup() {
 
 	//-
 
-	//build
-	//gui internal
-	gui_Mixer.setup("MIXER");
-	gui_Mixer.add(mixerGpu.getParameterGroup());
+	////build
+	////gui internal
+	//gui_Mixer.setup("MIXER");
+	//gui_Mixer.add(mixerGpu.getParameterGroup());
 #endif
 
 	//--
@@ -1090,15 +1000,15 @@ void ofxSurfingMixer::setup() {
 
 	ofLogNotice(__FUNCTION__) << "STARTUP INIT";
 
-	DISABLE_Callbacks = false;
+	bDisableCallbacks = false;
 
 	startup();
 }
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::startup() {
-	MODE_Active = true;
-	ENABLE_AutoSave = false;
+	bModeActive = true;
+	bEnableAutosave = false;
 
 	//-
 
@@ -1132,13 +1042,13 @@ void ofxSurfingMixer::updateEngine() {
 
 	//--
 
-	//autosave
-	if (ENABLE_AutoSave && ofGetElapsedTimeMillis() - timerLast_Autosave > timeToAutosave) {
-		DISABLE_Callbacks = true;
+	// autosave
+	if (bEnableAutosave && ofGetElapsedTimeMillis() - timerLast_Autosave > timeToAutosave) {
+		bDisableCallbacks = true;
 
 		//get gui position before save
 #ifdef INCLUDE_ofxGui
-		Gui_Position = glm::vec2(gui_Control.getPosition());
+		positionGui = glm::vec2(gui_Control.getPosition());
 #endif
 
 		saveParams(params_AppSession, path_GLOBAL + path_Params_AppSession);
@@ -1150,45 +1060,21 @@ void ofxSurfingMixer::updateEngine() {
 		timerLast_Autosave = ofGetElapsedTimeMillis();
 		if (true) ofLogNotice(__FUNCTION__) << "\t\t\t\t\t\t\t\t\t[AUTOSAVE]";
 
-		DISABLE_Callbacks = false;
+		bDisableCallbacks = false;
 	}
-
-	//-
-
-//mixer
-#ifdef INCLUDE_MIXER_MODE
-	#ifdef INCLUDE_ofxGui
-	if (ENABLE_MIXER && SHOW_MIXER && bGuiAdv) {
-		//gui internal
-		//below the gui
-		int xPad = 2;
-		int yPad = 0;
-		ofRectangle wr = gui_Control.getShape();
-		float x = wr.getTopRight().x + xPad;
-		float y = wr.getTopRight().y + yPad;
-		gui_Mixer.setPosition(x, y);
-	}
-	#endif
-#endif
 }
-
-////--------------------------------------------------------------
-//void ofxSurfingMixer::draw()
-//{
-//}
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::exit() {
 	ofLogNotice(__FUNCTION__) << "--------------------------------------------------------------";
-	ofLogNotice(__FUNCTION__);
 
-	DISABLE_Callbacks = true;
+	bDisableCallbacks = true;
 
 	//-
 
 //get gui position before save
 #ifdef INCLUDE_ofxGui
-	Gui_Position = glm::vec2(gui_Control.getPosition());
+	positionGui = glm::vec2(gui_Control.getPosition());
 #endif
 
 	saveParams(params_AppSession, path_GLOBAL + path_Params_AppSession);
@@ -1229,7 +1115,7 @@ void ofxSurfingMixer::windowResized(int w, int h) {
 	resizeFbos(window_W, window_H);
 
 	//mixer
-	//panel_MIXER->setPosition(preview_Position.get().x + 5, preview_Position.get().y + 165);
+	//panel_MIXER->setPosition(positionPreview.get().x + 5, positionPreview.get().y + 165);
 	//panel_MIXER->setPosition(window_W - (6 * 200), 5);
 }
 
@@ -1252,211 +1138,6 @@ void ofxSurfingMixer::keyPressed(ofKeyEventArgs & eventArgs) {
 		ofLogNotice(__FUNCTION__) << "mod_CONTROL: " << (mod_CONTROL ? "ON" : "OFF");
 		ofLogNotice(__FUNCTION__) << "mod_ALT: " << (mod_ALT ? "ON" : "OFF");
 		ofLogNotice(__FUNCTION__) << "mod_SHIFT: " << (mod_SHIFT ? "ON" : "OFF");
-	}
-
-	//-
-
-	//disabler for all keys. (independent from MODE_Active)
-	if (ENABLE_keys_AllMixer) {
-		//browse blend modes
-		if (false) { }
-
-#ifdef INCLUDE_BLEND_MODE
-		//if (!MODE_SHOW_FboFxHelper)//not in fx edit mode to avoid collisions..
-		if (true) {
-			if (ENABLE_BLEND) {
-				if (key == OF_KEY_RIGHT) {
-					if (blendMode >= 24) {
-						blendMode = 0;
-					} else {
-						blendMode++;
-					}
-				} else if (key == OF_KEY_LEFT) {
-					if (blendMode <= 0) {
-						blendMode = 24;
-					} else {
-						blendMode--;
-					}
-				}
-			}
-		}
-#endif
-
-#ifdef INCLUDE_MIXER_MODE
-		if (ENABLE_MIXER) {
-			//select blend mode
-			//if (!MODE_SHOW_FboFxHelper)//not in fx edit mode to avoid collision
-			if (true) {
-				//-
-
-				//mixer
-				if (key == OF_KEY_RIGHT) {
-					if (mixerGpu.channelSelect.get() != 0) //except channel 0 background
-					{
-						if (mixerGpu.getBlendMode() >= mixerGpu.getLastBlendMode()) {
-							mixerGpu.setBlendMode(mixerGpu.getLastBlendMode()); //blocked
-							//mixerGpu.setBlendMode(1);//cycled. first blendMode
-						} else {
-							mixerGpu.setBlendMode(mixerGpu.getBlendMode() + 1);
-						}
-					} else //browse bg hue
-					{
-						ofColor c = colorBackground.get();
-						int bgH = c.getHue();
-						bgH += 5;
-						if (bgH > 255)
-							bgH = 255;
-						c.setHue(bgH);
-						colorBackground = c;
-						mixerGpu.setColorChannel0(colorBackground.get());
-					}
-				} else if (key == OF_KEY_LEFT) //block channel 0 background
-				{
-					if (mixerGpu.channelSelect.get() != 0) {
-						if (mixerGpu.getBlendMode() <= 1) //first blendMode
-						{
-							mixerGpu.setBlendMode(1); //blocked
-							//mixerGpu.setBlendMode(mixerGpu.getLastBlendMode());//cycled
-						} else {
-							mixerGpu.setBlendMode(mixerGpu.getBlendMode() - 1);
-						}
-					} else //browse bg hue
-					{
-						ofColor c = colorBackground.get();
-						int bgH = c.getHue();
-						bgH -= 5;
-						if (bgH < 0)
-							bgH = 0;
-						c.setHue(bgH);
-						colorBackground = c;
-						mixerGpu.setColorChannel0(colorBackground.get());
-					}
-				}
-
-				//select channel
-				else if (key == OF_KEY_DOWN) {
-					if (mixerGpu.channelSelect.get() <= 0) {
-						mixerGpu.selectChannel(0); //blocked
-						//mixerGpu.selectChannel(mixerGpu.getLastChannel());//cycled
-					} else {
-						mixerGpu.selectChannel(mixerGpu.channelSelect.get() - 1);
-					}
-				} else if (key == OF_KEY_UP) {
-					if (mixerGpu.channelSelect.get() >= mixerGpu.getLastChannel()) {
-						mixerGpu.selectChannel(mixerGpu.getLastChannel());
-						//mixerGpu.selectChannel(0);//cycle
-					} else {
-						mixerGpu.selectChannel(mixerGpu.channelSelect.get() + 1);
-					}
-				}
-
-				//solo
-				else if (key == 's') {
-					mixerGpu.toggleSolo();
-				}
-
-				//reload gui theme
-				else if (key == 'j') {
-					//loadTheme(path_Theme);
-				}
-			}
-		}
-#endif
-		//--
-
-		//gui
-		if (key == 'g' || key == OF_KEY_F1) {
-			SHOW_GuiAll = !SHOW_GuiAll;
-			ofLogNotice(__FUNCTION__) << "SHOW_GuiAll:" << SHOW_GuiAll.get();
-
-			if (!SHOW_GuiAll) bGuiAdv = SHOW_GuiAll;
-		}
-		//---
-
-		//main panels
-		////mixer, blender & mask gui
-		//if (key == OF_KEY_F1)
-		//{
-		//	SHOW_MIXER = !SHOW_MIXER;
-		//}
-
-		//preview monitors
-		else if (key == OF_KEY_F2) {
-			SHOW_Preview = !SHOW_Preview;
-		}
-		//preview monitors
-		else if (key == 'p') {
-			SHOW_Preview = !SHOW_Preview;
-		}
-
-		//swap
-		else if (key == '/') // || key == OF_KEY_BACKSPACE)
-		{
-			swapChannels = !swapChannels;
-		}
-
-		//---
-
-		//blend mixer modes browse TAB
-		else if (key == key_MODE_AppMixer && !mod_CONTROL) //key TAB
-		{
-			//disabled app modes
-			//int i = MODE_AppMixer - 1;
-			//i++;
-			//i = i % NUM_MODES_APP;
-			//MODE_AppMixer = i + 1;
-
-			////using tabs
-			//int i = selectedTab;
-			//i++;
-			//i = i % NUM_TABS;
-			//selectedTab = i;
-			//gTabs->setActiveTab(selectedTab);
-		}
-
-		//---
-
-		//help
-		else if (key == 'h') {
-			SHOW_Help = !SHOW_Help;
-		}
-
-		////debug
-		//else if (key == 'd')
-		//{
-		//	ENABLE_Debug = !ENABLE_Debug;
-		//}
-
-		//---
-
-		//edit fx
-		else if (key == key_MODE_AppMixer && mod_CONTROL) {
-			MODE_SHOW_FboFxHelper = !MODE_SHOW_FboFxHelper;
-		}
-
-		//---
-	}
-
-	//--
-
-	// this keys are allways actived. can't be disabled globally, just unsuscribing callback listeners...
-
-	//key enabler (never locked by internal settings)
-	if (key == 'k' && mod_CONTROL) {
-		ENABLE_keys_AllMixer = !ENABLE_keys_AllMixer;
-		ofLogNotice(__FUNCTION__) << "KEYS: " << (ENABLE_keys_AllMixer ? "ON" : "OFF");
-
-		if (!ENABLE_keys_AllMixer) {
-			ofLogNotice(__FUNCTION__) << "ALL KEYS DISABLED. PRESS 'k' TO ENABLE GAIN!";
-		} else {
-			ofLogNotice(__FUNCTION__) << "KEYS ENABLED BACK";
-		}
-	}
-
-	//-
-
-	if (key == 'G') {
-		bGuiAdv = !bGuiAdv;
 	}
 }
 
@@ -1481,7 +1162,6 @@ void ofxSurfingMixer::removeKeysListeners() {
 	ofRemoveListener(ofEvents().keyPressed, this, &ofxSurfingMixer::keyPressed);
 }
 
-//mouse
 //--------------------------------------------------------------
 void ofxSurfingMixer::mouseDragged(ofMouseEventArgs & eventArgs) {
 	const int & x = eventArgs.x;
@@ -1522,8 +1202,7 @@ void ofxSurfingMixer::removeMouseListeners() {
 void ofxSurfingMixer::setActive(bool b) {
 	//disables all keys and mouse interaction listeners from the addon
 
-	MODE_Active = b;
-	ENABLE_keys_AllMixer = b;
+	bModeActive = b;
 	//enable/disable all keys bc the main addon where the addons runs could be
 	//controlling other things/addons or mode apps..
 
@@ -1532,18 +1211,8 @@ void ofxSurfingMixer::setActive(bool b) {
 		removeKeysListeners();
 		removeMouseListeners();
 
-		//fx
-		//MODE_SHOW_FboFxHelper = false;
-
-		//hide presets
-
-		//mixer
-
-		//preview monitors
-		//SHOW_Preview = false;
-
 		//gui
-		SHOW_GuiAll = false;
+		bGui = false;
 	}
 
 	//active
@@ -1552,19 +1221,19 @@ void ofxSurfingMixer::setActive(bool b) {
 		addMouseListeners();
 
 		//gui
-		SHOW_GuiAll = true;
+		bGui = true;
 	}
 }
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::setGuiVisible(bool b) {
-	SHOW_GuiAll = b;
+	bGui = b;
 }
 
 //addon params
 //--------------------------------------------------------------
 void ofxSurfingMixer::Changed_params_Settings(ofAbstractParameter & e) {
-	if (!DISABLE_Callbacks) {
+	if (!bDisableCallbacks) {
 		std::string name = e.getName();
 
 		//exclude debugs
@@ -1577,22 +1246,22 @@ void ofxSurfingMixer::Changed_params_Settings(ofAbstractParameter & e) {
 		}
 
 		//modes
-		else if (name == ENABLE_BLEND.getName()) {
-			DISABLE_Callbacks = true;
-			if (ENABLE_BLEND) {
-				ENABLE_MIXER = false;
+		else if (name == bEnableBlend.getName()) {
+			bDisableCallbacks = true;
+			if (bEnableBlend) {
+				bEnableMixer = false;
 				MODE_AppMixer = 2;
 			}
-			DISABLE_Callbacks = false;
+			bDisableCallbacks = false;
 
 			guiRefresh();
-		} else if (name == ENABLE_MIXER.getName()) {
-			DISABLE_Callbacks = true;
-			if (ENABLE_MIXER) {
-				ENABLE_BLEND = false;
+		} else if (name == bEnableMixer.getName()) {
+			bDisableCallbacks = true;
+			if (bEnableMixer) {
+				bEnableBlend = false;
 				MODE_AppMixer = 1;
 			}
-			DISABLE_Callbacks = false;
+			bDisableCallbacks = false;
 
 			guiRefresh();
 		}
@@ -1606,44 +1275,34 @@ void ofxSurfingMixer::Changed_params_Settings(ofAbstractParameter & e) {
 			std::string message = ofToUpper(psBlend.getBlendMode(blendMode));
 			ofStringReplace(message, "BLEND", "");
 			blendName = message;
-
-	#ifdef BLEND_TOGGLES
-			DISABLE_Callbacks = true;
-			for (int i = 0; i < ENABLE_Blends.size(); i++) {
-				ENABLE_Blends[i] = (blendMode.get() == i);
-			}
-			DISABLE_Callbacks = false;
-	#endif
 		}
 #endif
 		//-
 
 		else if (name == "RESET") {
-			DISABLE_Callbacks = true;
-			if (RESET_Backgrounds) {
-				RESET_Backgrounds = false;
+			bDisableCallbacks = true;
+			if (bResetBackgrounds) {
+				bResetBackgrounds = false;
 
 				colorBg1 = ofColor(0, 255);
 				colorBg2 = ofColor(0, 255);
 				colorBgMix = ofColor(0, 255);
 				ENABLE_Channel1 = true;
 				ENABLE_Channel2 = true;
-				ENABLE_Bg1 = true;
-				ENABLE_Bg2 = true;
-				ENABLE_BgMix = true;
+				bEnableBg1 = true;
+				bEnableBg2 = true;
+				bEnableBgMix = true;
 			}
-			if (ENABLE_MIXER) {
-#ifdef INCLUDE_MIXER_MODE
+			if (bEnableMixer) {
 				mixerGpu.setColorChannel0(ofColor(0, 255));
-#endif
 			}
-			DISABLE_Callbacks = false;
+			bDisableCallbacks = false;
 		}
 
 		//-
 
-		else if (name == swapChannels.getName()) {
-			if (!swapChannels) {
+		else if (name == bSwapChannels.getName()) {
+			if (!bSwapChannels) {
 				swapInfo = "CH1 * CH2";
 			} else {
 				swapInfo = "CH2 * CH1";
@@ -1654,36 +1313,13 @@ void ofxSurfingMixer::Changed_params_Settings(ofAbstractParameter & e) {
 		else if (name == mixerGpu.channelSelect.getName()) {
 			guiRefresh();
 		}
-
-		//-
-
-		//blend
-		//toggle selectors
-#ifdef BLEND_TOGGLES
-		bool bdo = false;
-		for (int i = 0; i < ENABLE_Blends.size(); i++) {
-			if (ENABLE_Blends[i].getName() == psBlend.getBlendMode(i)) {
-				DISABLE_Callbacks = true;
-				blendMode = i;
-				bdo = true;
-				DISABLE_Callbacks = false;
-			}
-		}
-		if (bdo) {
-			DISABLE_Callbacks = true;
-			for (int i = 0; i < ENABLE_Blends.size(); i++) {
-				ENABLE_Blends[i] = (blendMode.get() == i);
-			}
-			DISABLE_Callbacks = false;
-		}
-#endif
 	}
 }
 
 //addon internal params
 //--------------------------------------------------------------
 void ofxSurfingMixer::Changed_params_AppSession(ofAbstractParameter & e) {
-	if (!DISABLE_Callbacks) {
+	if (!bDisableCallbacks) {
 		std::string name = e.getName();
 
 		//exclude debugs
@@ -1718,11 +1354,11 @@ void ofxSurfingMixer::Changed_params_AppSession(ofAbstractParameter & e) {
 		}
 #ifdef INCLUDE_ofxGui
 		else if (name == "GUI POSITION") {
-			gui_Control.setPosition(Gui_Position.get().x, Gui_Position.get().y);
+			gui_Control.setPosition(positionGui.get().x, positionGui.get().y);
 		}
 #endif
 		else if (name == "ACTIVE") {
-			setActive(MODE_Active);
+			setActive(bModeActive);
 		}
 
 		//-
@@ -1766,8 +1402,8 @@ void ofxSurfingMixer::Changed_params_AppSession(ofAbstractParameter & e) {
 			fbo_Mixer_B.end();
 		}
 
-		else if (name == SHOW_Preview.getName()) {
-			//gUser->getControl(SHOW_Backgrounds.getName())->setEnabled(SHOW_Preview.get());
+		else if (name == bShowPreview.getName()) {
+			//gUser->getControl(bShowBackgrounds.getName())->setEnabled(bShowPreview.get());
 		}
 	}
 }
@@ -1797,7 +1433,7 @@ void ofxSurfingMixer::loadParams(ofParameterGroup & g, std::string path) {
 //--------------------------------------------------------------
 void ofxSurfingMixer::saveParams(ofParameterGroup & g, std::string path) {
 	//TODO:
-	//if (!ENABLE_AutoSave && !DISABLE_Callbacks)//reduce double log when autosave happens
+	//if (!bEnableAutosave && !bDisableCallbacks)//reduce double log when autosave happens
 	{
 		ofLogNotice(__FUNCTION__) << path;
 	}
@@ -1818,57 +1454,15 @@ void ofxSurfingMixer::guiRefresh() {
 		//--
 
 		//workflow: set a default mode if all are disabled
-		if (!ENABLE_BLEND && !ENABLE_MIXER) {
+		if (!bEnableBlend && !bEnableMixer) {
 			MODE_AppMixer = 2;
-			ENABLE_MIXER = true;
+			bEnableMixer = true;
 		}
 
 		//----
 
-		//internal ofxGui
-#ifdef INCLUDE_MIXER_MODE
-	#ifdef INCLUDE_ofxGui
-		if (ENABLE_MIXER && SHOW_MIXER && bGuiAdv) {
-			auto & gMixer = gui_Mixer.getGroup(params_Mixer.getName());
-
-			auto & gPrv = gMixer.getGroup("PREVIEW");
-			auto & gCh0 = gMixer.getGroup("BACKGROUND");
-			auto & gCh1 = gMixer.getGroup("CHANNEL 1");
-			auto & gCh1Tint = gCh1.getGroup("TINT");
-			auto & gCh2 = gMixer.getGroup("CHANNEL 2");
-			auto & gCh2Tint = gCh2.getGroup("TINT");
-
-			gPrv.minimize();
-			gCh0.minimize();
-			gCh1.minimize();
-			gCh1Tint.minimize();
-			gCh2.minimize();
-			gCh2Tint.minimize();
-
-			//-
-
-			gPrv.maximize();
-
-			switch (mixerGpu.channelSelect.get()) {
-			case 0:
-				gCh0.maximize();
-				break;
-			case 1:
-				gCh1.maximize();
-				break;
-			case 2:
-				gCh2.maximize();
-				break;
-			default:
-				break;
-			}
-		}
-	#endif
-
-		//--
-
 		// internal ofxGui
-	#ifdef INCLUDE_ofxGui
+#ifdef INCLUDE_ofxGui
 		// blend gui pannel
 		auto & gInternal = gui_Control.getGroup("INTERNAL"); //1st level
 		//gInternal.minimize();
@@ -1890,18 +1484,11 @@ void ofxSurfingMixer::guiRefresh() {
 		gBlend.minimize();
 
 		//modes
-		if (ENABLE_BLEND) {
+		if (bEnableBlend) {
 			gBlend.maximize();
-		#ifdef INCLUDE_MIXER_MODE
-					//gMixer.minimize();
-		#endif
-		} else if (ENABLE_MIXER) {
+		} else if (bEnableMixer) {
 			gBlend.minimize();
-		#ifdef INCLUDE_MIXER_MODE
-					//gMixer.maximize();
-		#endif
 		}
-	#endif
 #endif
 	}
 }

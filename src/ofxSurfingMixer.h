@@ -3,9 +3,6 @@
 
 //-----------------------------
 
-//	TODO:
-//	+	allow one channel enable/preview without broke mixing
-
 #define INCLUDE_ofxGui
 #ifdef INCLUDE_ofxGui
 	#include "ofxGui.h"
@@ -16,13 +13,9 @@
 #ifdef INCLUDE_BLEND_MODE
 	#include "ofxPSBlend.h"
 #endif
-//#define BLEND_TOGGLES // too much toggles (24)... out of screen
 
 // 2. mixer
-#define INCLUDE_MIXER_MODE
-#ifdef INCLUDE_MIXER_MODE
-	#include "ofxGpuMixer.h"
-#endif
+#include "ofxGpuMixer.h"
 
 //app modes
 #define NUM_MODES_APP 3
@@ -41,7 +34,6 @@ public:
 	void setup();
 	void update();
 	void updateEngine();
-	//void draw();
 	void exit();
 	void windowResized(int w, int h);
 
@@ -120,19 +112,6 @@ public:
 
 	//--
 
-	// TODO: customize channel names
-	//std::string nameChannel1, nameChannel2;
-	//void setNameChannel1(std::string s)
-	//{
-	//	nameChannel1 = s;
-	//}
-	//void setNameChannel2(std::string s)
-	//{
-	//	nameChannel2 = s;
-	//}
-
-	//--
-
 private:
 	ofFbo fbo_Input_1; // channel1: background ?
 	ofFbo fbo_Input_2; // channel2: letters (will be the blend mix from channel 1 and channel 2 already ?
@@ -149,9 +128,6 @@ private:
 	// blender
 #ifdef INCLUDE_BLEND_MODE
 	ofxPSBlend psBlend;
-	#ifdef BLEND_TOGGLES
-	vector<ofParameter<bool>> ENABLE_Blends;
-	#endif
 #endif
 
 	//--
@@ -159,49 +135,42 @@ private:
 	// params
 
 private:
-	// control
-	ofParameter<bool> ENABLE_FboFxHelper { "ENABLE FX", true };
-	ofParameter<bool> MODE_SHOW_FboFxHelper { "SHOW FX", false };
-	ofParameter<bool> MODE_PRESET_MIXER { "MIXER PRESETS", false };
+	// Control
+	ofParameter<bool> bEnableFx { "ENABLE FX", true };
 
-	// 1. blend
+	// 1. Blend
 	ofParameterGroup params_Blend { "MODE BLEND" };
-	ofParameter<bool> ENABLE_BLEND { "ENABLE MODE BLEND", false };
-	ofParameter<bool> SHOW_Preview { "SHOW PREVIEW", true };
-	ofParameter<bool> swapChannels { "SWAP CHANNELS", false };
-	ofParameter<bool> SHOW_Backgrounds { "SHOW BG TINTS", false };
+	ofParameter<bool> bEnableBlend { "ENABLE MODE BLEND", false };
+	ofParameter<bool> bShowPreview { "SHOW PREVIEW", true };
+	ofParameter<bool> bSwapChannels { "SWAP CHANNELS", false };
+	ofParameter<bool> bShowBackgrounds { "SHOW BG TINTS", false };
 	ofParameter<std::string> swapInfo { "", "" };
 	ofParameter<int> blendMode { "BLEND MODE", 0, 0, 24 };
 	ofParameter<std::string> blendName { "", "" };
 
-	//2. mixer
+	// 2. Mixer
 	ofParameterGroup params_Mixer { "MODE MIXER" };
-	ofParameter<bool> ENABLE_MIXER { "ENABLE MODE MIXER", false };
+	ofParameter<bool> bEnableMixer { "ENABLE MODE MIXER", false };
 
 	ofParameterGroup params_Backgrounds { "BACKGROUNDS" };
 	ofParameter<bool> ENABLE_Channel1 { "CHANNEL 1", true };
 	ofParameter<bool> ENABLE_Channel2 { "CHANNEL 2", true };
-	ofParameter<bool> ENABLE_Bg1 { "BG1", true };
-	ofParameter<bool> ENABLE_Bg2 { "BG2", true };
-	ofParameter<bool> ENABLE_BgMix { "BG MIX", true };
+	ofParameter<bool> bEnableBg1 { "BG1", true };
+	ofParameter<bool> bEnableBg2 { "BG2", true };
+	ofParameter<bool> bEnableBgMix { "BG MIX", true };
 	ofParameter<ofColor> colorBg1 { "BG1 COLOR", ofColor(0, 255), ofColor(0, 0), ofColor(255, 255) };
 	ofParameter<ofColor> colorBg2 { "BG2 COLOR", ofColor(0, 255), ofColor(0, 0), ofColor(255, 255) };
 	ofParameter<ofColor> colorBgMix { "BG MIX COLOR", ofColor(0, 255), ofColor(0, 0), ofColor(255, 255) };
-	ofParameter<bool> RESET_Backgrounds { "RESET", false };
+	ofParameter<bool> bResetBackgrounds { "RESET", false };
 
-#ifdef INCLUDE_MIXER_MODE
 private:
+	// Mixer
 	ofxGpuMixer::Mixer mixerGpu;
 	ofFbo fbo_Mixer_A;
 	ofFbo fbo_Mixer_B;
 	ofxGpuMixer::SimpleColorChannel colorChannel;
 	ofTexture tex_Mixer_B;
 	ofParameter<ofColor> colorBackground;
-
-	#ifdef INCLUDE_ofxGui
-	ofxPanel gui_Mixer;
-	#endif
-#endif
 
 	//--
 
@@ -221,12 +190,12 @@ private:
 
 	//-
 
-	ofParameter<glm::vec2> preview_Position;
+	ofParameter<glm::vec2> positionPreview;
 
 public:
 	//--------------------------------------------------------------
-	void setPreview_Position(glm::vec2 pos) {
-		preview_Position = pos;
+	void setPositionPreview(glm::vec2 pos) {
+		positionPreview = pos;
 	}
 
 	//------------------------------------------------------------------------------
@@ -234,11 +203,11 @@ public:
 	void setActive(bool b);
 	//--------------------------------------------------------------
 	void setToggleActive() {
-		setActive(!MODE_Active.get());
+		setActive(!bModeActive.get());
 	}
 	//--------------------------------------------------------------
 	void setToggleGuiVisible() {
-		setGuiVisible(!SHOW_GuiAll.get());
+		setGuiVisible(!bGui.get());
 	}
 	void setGuiVisible(bool b);
 
@@ -260,7 +229,7 @@ public:
 
 	//--------------------------------------------------------------
 	void setAutoSave(bool b) {
-		ENABLE_AutoSave = b;
+		bEnableAutosave = b;
 	}
 
 	//--
@@ -270,26 +239,22 @@ private:
 	int window_W, window_H;
 
 	//autosave
-	ofParameter<bool> ENABLE_AutoSave;
+	ofParameter<bool> bEnableAutosave;
 	uint64_t timerLast_Autosave = 0;
 	int timeToAutosave = 10000; //10 secs
 
 	//updating some params before save will trigs also the group callbacks
 	//so we disable this callbacks just in case params updatings are required
 	//in this case we will need to update gui position param
-	bool DISABLE_Callbacks = false;
+	bool bDisableCallbacks = false;
 
 	//-
 
 private:
 	ofParameterGroup params_Internal;
-	ofParameter<bool> MODE_Active;
-	ofParameter<bool> ENABLE_keys_AllMixer;
-	//ofParameter<bool> ENABLE_Debug;
-	ofParameter<bool> SHOW_GuiAll;
-	ofParameter<bool> SHOW_MIXER;
-	ofParameter<glm::vec2> Gui_Position;
-	ofParameter<bool> SHOW_Help;
+	ofParameter<bool> bModeActive;
+	ofParameter<bool> bGui;
+	ofParameter<glm::vec2> positionGui;
 	ofParameter<int> MODE_AppMixer;
 	ofParameter<std::string> MODE_AppMixer_Name;
 
@@ -339,7 +304,5 @@ private:
 	int sizeTTF;
 
 	void drawPreviewsCheckerboard(float x, float y, float width, float height, float size);
-	//TODO:could improve preformance cpu using fbo or loaded image..
-
-	std::string helpInfo;
+	//TODO:could improve performance cpu using fbo or loaded image..
 };
