@@ -260,7 +260,7 @@ void ofxSurfingMixer::setupParamsMixer() {
 
 // PRE-channel1
 //--------------------------------------------------------------
-void ofxSurfingMixer::begin_PRE_Channel_1() {
+void ofxSurfingMixer::begin_CH1() {
 	if (bEnableFx) {
 	} else if (!bEnableFx) // bypass fx
 	{
@@ -269,7 +269,7 @@ void ofxSurfingMixer::begin_PRE_Channel_1() {
 }
 
 //--------------------------------------------------------------
-void ofxSurfingMixer::end_PRE_Channel_1() {
+void ofxSurfingMixer::end_CH1() {
 	if (bEnableFx) {
 		begin_Channel_1();
 		end_Channel_1();
@@ -286,7 +286,7 @@ void ofxSurfingMixer::end_PRE_Channel_1() {
 // PRE-channel2
 
 //--------------------------------------------------------------
-void ofxSurfingMixer::begin_PRE_Channel_2() {
+void ofxSurfingMixer::begin_CH2() {
 	if (bEnableFx) {
 	} else if (!bEnableFx) //bypass fx
 	{
@@ -295,7 +295,7 @@ void ofxSurfingMixer::begin_PRE_Channel_2() {
 }
 
 //--------------------------------------------------------------
-void ofxSurfingMixer::end_PRE_Channel_2() {
+void ofxSurfingMixer::end_CH2() {
 	if (bEnableFx) {
 		begin_Channel_2();
 
@@ -524,7 +524,7 @@ void ofxSurfingMixer::end_Mix() {
 }
 
 //--------------------------------------------------------------
-void ofxSurfingMixer::drawMixer() {
+void ofxSurfingMixer::draw() {
 
 	//--
 

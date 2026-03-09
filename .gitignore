@@ -136,3 +136,4 @@ Desktop.ini
 *.sqlite
 example/bin/data/ofxSurfingMixer/Preset_Settings.xml
 example/bin/data/ofxSurfingMixer/AppSession_Settings.xml
+example/enc_temp_folder/32e48a87df01aca64a32c171b6f56/ofxSurfingMixer.cpp

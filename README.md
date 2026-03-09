@@ -2,54 +2,62 @@ ofxSurfingMixer
 -------------------------
 
 # Overview
-**ofxSurfingMixer** is an **openFrameworks** addon template for MYSELF.
+**ofxSurfingMixer** is an **openFrameworks** addon for GPU mixing 2 video channels y realtime.
 
 ## Screenshots
-![image](/readme_images/Capture5.JPG?raw=true "image")
-![image](/readme_images/Capture1.JPG?raw=true "image")
-![image](/readme_images/Capture2.JPG?raw=true "image")
-![image](/readme_images/Capture3.JPG?raw=true "image")
-![image](/readme_images/Capture4.JPG?raw=true "image")
+[]("Capture.PNG")
 
 ## Features
-- 
+- Bundles `ofxPSBlend` and `ofxGpuMixer` features.
 
 ## Usage
- 
+
 ### ofApp.h
 ```.cpp
 #include "ofxSurfingMixer.h"
-ofxSurfingMixer myAddon;
+ofxSurfingMixer mixer;
 ```
 
 ### ofApp.cpp
 ```.cpp
-ofApp::setup(){
-	ofxSurfingMixer.setup();
+void ofApp::update() {
+	// channel 1
+	mixer.begin_CH1();
+	{
+		scene.drawChannel1();
+	}
+	mixer.end_CH1();
+
+	// channel 2
+	mixer.begin_CH2();
+	{
+		scene.drawChannel2();
+	}
+	mixer.end_CH2();
+
+	mixer.update();
 }
 
-ofApp::update(){
-	ofxSurfingMixer.update();
-}
+void ofApp::draw() {
+	// Mixer OUT
+	mixer.draw();
 
-ofApp::draw(){
-	ofxSurfingMixer.draw();
-	ofxSurfingMixer.drawGui();
+	// Gui
+	mixer.drawGui();
 }
 ```
 
 ## Dependencies
-- 
+- ofxSurfingMixer
+- ofxGui
+- ofxSceneTEST -> FOR TESTING ONLY
+- ofxSurfingHelpers
 
 ## Tested systems
-- **Windows10** / **VS2017** / **OF ~0.11**
-- **macOS High Sierra** / **Xcode 9/10** / **OF ~0.11**
-
-### TODO
-* 
+- **Windows10** / **VS2026** / **OF 0.12.1**
 
 ## Author
-Addon by **@moebiusSurfing**  
+Addon by **@moebiusSurfing**
 *(ManuMolina). 2020.*
 
 ## License

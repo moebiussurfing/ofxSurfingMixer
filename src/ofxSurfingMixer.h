@@ -68,10 +68,10 @@ private:
 	void resizeFbos(int w, int h);
 
 public:
-	void begin_PRE_Channel_1();
-	void end_PRE_Channel_1();
-	void begin_PRE_Channel_2();
-	void end_PRE_Channel_2();
+	void begin_CH1();
+	void end_CH1();
+	void begin_CH2();
+	void end_CH2();
 
 	void begin_Channel_1();
 	void end_Channel_1();
@@ -93,7 +93,7 @@ private:
 
 public:
 	void updateMixer();
-	void drawMixer();
+	void draw();
 	void drawGui();
 
 	//--
