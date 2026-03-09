@@ -12,11 +12,13 @@ ofxSurfingMixer::ofxSurfingMixer() {
 
 	//-
 
-	setActive(true); //add key and mouse listeners
+	setActive(true); // add key and mouse listeners
 
-	//-
+	//--
 
-	// labels font
+	// UI text
+
+	// Labels font
 	bool bLoaded;
 	sizeTTF = 8;
 	myTTF = "assets/fonts/";
@@ -25,25 +27,28 @@ ofxSurfingMixer::ofxSurfingMixer() {
 	myFont.load(myTTF, sizeTTF, true, true);
 	bLoaded = myFontSmall.load(myTTF, sizeTTF - 2, true, true);
 	if (bLoaded)
-		ofLogNotice(__FUNCTION__) << "LOADED FILE '" << myTTF << "'";
+		ofLogVerbose("ofxSurfingMixer") << "LOADED FILE '" << myTTF << "'";
 	else
-		ofLogError(__FUNCTION__) << "FILE '" << myTTF << "' NOT FOUND!";
+		ofLogError("ofxSurfingMixer") << "FILE '" << myTTF << "' NOT FOUND!";
 
 	//-
 
-	// help font
+	// Help font
 	sizeTTF = 10;
 	myTTF = "assets/fonts/";
 	myTTF += "overpass-mono-bold.otf";
 	bLoaded = myFontHelp.load(myTTF, sizeTTF, true, true);
 	if (bLoaded)
-		ofLogNotice(__FUNCTION__) << "LOADED FILE '" << myTTF << "'";
+		ofLogVerbose("ofxSurfingMixer") << "LOADED FILE '" << myTTF << "'";
 	else
-		ofLogError(__FUNCTION__) << "FILE '" << myTTF << "' NOT FOUND!";
+		ofLogError("ofxSurfingMixer") << "FILE '" << myTTF << "' NOT FOUND!";
 }
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::reallocate(int w, int h) {
+	// Initialize FBOs
+	ofLogNotice("ofxSurfingMixer") << "reallocate " << w << ", " << h;
+
 	//TODO:
 	//ofEnableArbTex();
 
@@ -95,6 +100,8 @@ void ofxSurfingMixer::reallocate(int w, int h) {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::resizeFbos(int w, int h) {
+	ofLogNotice("ofxSurfingMixer") << "resizeFbos " << w << ", " << h;
+
 	//TODO:
 	ofEnableArbTex();
 
@@ -167,7 +174,7 @@ void ofxSurfingMixer::setupParamsInternal() {
 	params_UserGui.add(bShowPreview);
 	params_UserGui.add(bShowBackgrounds);
 	params_UserGui.add(bSwapChannels);
-	//params_UserGui.add(swapInfo);
+	//params_UserGui.add(infoChanelsSwap);
 
 	bEnableFx = false;
 
@@ -181,6 +188,8 @@ void ofxSurfingMixer::setupParamsInternal() {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::setupParamsMixer() {
+	ofLogVerbose("ofxSurfingMixer") << "setupParamsMixer()";
+
 	// 1. blend
 
 	//params_Blend.add(bEnableBlend);
@@ -226,26 +235,26 @@ void ofxSurfingMixer::setupParamsMixer() {
 	//-
 
 	blendName.setSerializable(false);
-	swapInfo.setSerializable(false);
+	infoChanelsSwap.setSerializable(false);
 
 	//-
 
 	// all params
-	params_Basic.setName("Preset_Settings");
+	params_Preset.setName("Preset_Settings");
 	params_Control.setName("Control");
 	params_Control.add(bEnableChannel1);
 	params_Control.add(bEnableChannel2);
 	params_Control.add(bSwapChannels);
 	params_Control.add(bShowBackgrounds);
-	params_Control.add(swapInfo);
+	params_Control.add(infoChanelsSwap);
 	params_Control.add(bEnableBlend);
 	params_Control.add(bEnableMixer);
-	params_Basic.add(params_Control);
+	params_Preset.add(params_Control);
 
 	// modes
-	params_Basic.add(params_Backgrounds);
-	params_Basic.add(params_Blend);
-	params_Basic.add(params_Mixer);
+	params_Preset.add(params_Backgrounds);
+	params_Preset.add(params_Blend);
+	params_Preset.add(params_Mixer);
 
 	//--
 }
@@ -286,10 +295,6 @@ void ofxSurfingMixer::begin_PRE_Channel_2() {
 	{
 		begin_Channel_2();
 	}
-}
-
-//--------------------------------------------------------------
-void ofxSurfingMixer::setToggleFX(bool b) {
 }
 
 //--------------------------------------------------------------
@@ -851,29 +856,28 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::drawGui() {
-	//ofLogNotice(__FUNCTION__);
-
-	//blend and mask
-	if (bGuiAdv) {
+	// Blend and mask
+	if (bGuiAdvanced) {
 #ifdef INCLUDE_ofxGui
-		gui.draw(); //all guis together
+		gui.draw(); // all guis together
 #endif
 	}
 
-	//-
+	//--
 
-	// preview monitors
-	drawPreviews(positionPreview.get().x, positionPreview.get().y, window_W / 9.0f);
+	// Preview monitors / channels
+	if (bShowPreview)
+		drawPreviews(positionPreview.get().x, positionPreview.get().y, window_W / 9.0f);
 }
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::updateMixer() {
 
-	// mixer
+	// Mixer
 	if (bEnableMixer) {
 		mixerGpu.update();
 
-		//easy callbacks
+		// Easy callbacks
 		//if (mixerGpu.isUpdated())//not working?
 		//{
 		//	guiRefresh();
@@ -886,22 +890,24 @@ void ofxSurfingMixer::updateMixer() {
 
 	//--
 
-	//blend/mix the 2 channels
+	// Blend/mix the 2 channels
 	begin_Mix();
 	end_Mix();
 }
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::setup() {
+	ofLogVerbose("ofxSurfingMixer") << "setup()";
+
 	bDisableCallbacks = true;
 
 	//--
 
-	// log mode
-	//ofSetLogLevel(OF_LOG_SILENT);
-	ofSetLogLevel("ofxSurfingMixer", OF_LOG_NOTICE);
-	//ofSetLogLevel("ofxSurfingMixer", OF_LOG_SILENT);
-	ofSetLogLevel("ofxGpuMixer", OF_LOG_VERBOSE);
+	//// log mode
+	////ofSetLogLevel(OF_LOG_SILENT);
+	//ofSetLogLevel("ofxSurfingMixer", OF_LOG_NOTICE);
+	////ofSetLogLevel("ofxSurfingMixer", OF_LOG_SILENT);
+	//ofSetLogLevel("ofxGpuMixer", OF_LOG_VERBOSE);
 
 	//--
 
@@ -926,31 +932,21 @@ void ofxSurfingMixer::setup() {
 
 	//--
 
-	// gui internal
+	// Gui advanced / internal ofxGui
 
 #ifdef INCLUDE_ofxGui
-	//gui theme
-	//std::string str = "assets/fonts/overpass-mono-bold.otf";
-	//ofFile file(str);
-	//if (file.exists()) {
-	//	ofxGuiSetFont(str, 9);
-	//} else {
-	//	ofLogError(__FUNCTION__) << "setup() ofxGuiSetFont '" << str << "' NOT FOUND!";
-	//}
-	//ofxGuiSetDefaultHeight(20);
-	//ofxGuiSetBorderColor(32);
-	//ofxGuiSetFillColor(ofColor(48));
-	//ofxGuiSetTextColor(ofColor::white);
-	//ofxGuiSetHeaderColor(ofColor(24));
-
+	
 	//setup gui advanced (ofxGui)
 	gui.setup("ofxSurfingMixer");
-	gui.add(params_Internal); //add internal params
-	gui.add(params_UserGui); //add user params
-	gui.add(params_Basic); //add mixer addon params
 
-	auto & gInternal = gui.getGroup("INTERNAL"); //1st level
-	gInternal.minimize();
+	// extras not required
+	//gui.add(params_Internal); //add internal params
+	//gui.add(params_UserGui); //add user params
+
+	gui.add(params_Preset); //add mixer addon params
+
+	//auto & gInternal = gui.getGroup("INTERNAL"); // 1st level
+	//gInternal.minimize();
 #endif
 
 	//--
@@ -965,23 +961,12 @@ void ofxSurfingMixer::setup() {
 
 	ofAddListener(params_UserGui.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_AppSession);
 	ofAddListener(params_Internal.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_AppSession);
-	ofAddListener(params_Basic.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_Settings);
-	//must create callback for this group only, now we are sharing with internal callback
-
-	//--
-
-	// presetsManager
-
-	params_Preset.setName("ofxSurfingMixer");
-	params_Preset.add(params_Basic); //all
-	//params_Preset.add(params_Mixer);
-	//params_Preset.add(params_Blend);
+	ofAddListener(params_Preset.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_Settings);
+	// must create callback for this group only, now we are sharing with internal callback
 
 	//--------------------------------------------------------------
 
 	// startup
-
-	ofLogNotice(__FUNCTION__) << "STARTUP INIT";
 
 	bDisableCallbacks = false;
 
@@ -990,6 +975,8 @@ void ofxSurfingMixer::setup() {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::startup() {
+	ofLogVerbose("ofxSurfingMixer") << "startup()";
+
 	bModeActive = true;
 	bEnableAutosave = false;
 
@@ -997,9 +984,7 @@ void ofxSurfingMixer::startup() {
 
 	// settings
 	loadParams(params_AppSession, path_GLOBAL + path_Params_AppSession);
-
-	loadParams(params_Preset, path_GLOBAL + path_Params_Preset); //all
-	//loadParams(params_Mixer, path_GLOBAL + path_Params_Mixer);
+	loadParams(params_Preset, path_GLOBAL + path_Params_Preset); // all
 
 	guiRefresh();
 
@@ -1035,7 +1020,6 @@ void ofxSurfingMixer::updateEngine() {
 #endif
 
 		saveParams(params_AppSession, path_GLOBAL + path_Params_AppSession);
-
 		saveParams(params_Preset, path_GLOBAL + path_Params_Preset);
 
 		//saveParams(params_Mixer, path_GLOBAL + path_Params_Mixer);
@@ -1049,7 +1033,7 @@ void ofxSurfingMixer::updateEngine() {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::exit() {
-	ofLogNotice(__FUNCTION__) << "--------------------------------------------------------------";
+	ofLogVerbose("ofxSurfingMixer") << "exit()";
 
 	bDisableCallbacks = true;
 
@@ -1061,10 +1045,7 @@ void ofxSurfingMixer::exit() {
 #endif
 
 	saveParams(params_AppSession, path_GLOBAL + path_Params_AppSession);
-
 	saveParams(params_Preset, path_GLOBAL + path_Params_Preset); //all settings
-
-	//saveParams(params_Mixer, path_GLOBAL + path_Params_Mixer);
 }
 
 //--------------------------------------------------------------
@@ -1076,18 +1057,24 @@ ofxSurfingMixer::~ofxSurfingMixer() {
 	// remove params callbacks listeners
 	ofRemoveListener(params_UserGui.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_AppSession);
 	ofRemoveListener(params_Internal.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_AppSession);
-	ofRemoveListener(params_Basic.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_Settings);
+	ofRemoveListener(params_Preset.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_Settings);
 
 	exit();
 }
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::setLogLevel(ofLogLevel level) {
+	ofLogVerbose("ofxSurfingMixer") << "setLogLevel() " << level;
+
 	ofSetLogLevel("ofxSurfingMixer", level);
+	ofSetLogLevel("ofxGpuMixer", level);
+	ofSetLogLevel("ofxPSBlend", level);
 }
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::windowResized(int w, int h) {
+	ofLogVerbose("ofxSurfingMixer") << "windowResized() " << w << ", " << h;
+
 	window_W = w;
 	window_H = h;
 
@@ -1213,41 +1200,37 @@ void ofxSurfingMixer::setGuiVisible(bool b) {
 	bGui = b;
 }
 
-//addon params
 //--------------------------------------------------------------
 void ofxSurfingMixer::Changed_params_Settings(ofAbstractParameter & e) {
 	if (!bDisableCallbacks) {
 		std::string name = e.getName();
 
-		// exclude debugs
-		if (name != "" && name != " ") {
-			ofLogNotice(__FUNCTION__) << name << " : " << e;
-		}
-
-		// modes
-		else if (name == bEnableBlend.getName()) {
+		// Modes
+		if (name == bEnableBlend.getName()) {
 			bDisableCallbacks = true;
 			if (bEnableBlend) {
 				bEnableMixer = false;
 				MODE_AppMixer = 2;
+				MODE_AppMixer_Name = "MODE 1 BLEND";
 			}
 			bDisableCallbacks = false;
 
-			guiRefresh();
+			//guiRefresh();
 		} else if (name == bEnableMixer.getName()) {
 			bDisableCallbacks = true;
 			if (bEnableMixer) {
 				bEnableBlend = false;
 				MODE_AppMixer = 1;
+				MODE_AppMixer_Name = "MODE 2 MIXER";
 			}
 			bDisableCallbacks = false;
 
-			guiRefresh();
+			//guiRefresh();
 		}
 
 		//-
 
-		// blend
+		// Blend
 #ifdef INCLUDE_BLEND_MODE
 		// crashes when psBlend is not running yet in setup
 		else if (name == blendMode.getName() && bBlendRunning) {
@@ -1282,16 +1265,16 @@ void ofxSurfingMixer::Changed_params_Settings(ofAbstractParameter & e) {
 
 		else if (name == bSwapChannels.getName()) {
 			if (!bSwapChannels) {
-				swapInfo = "CH1 * CH2";
+				infoChanelsSwap = "CH1 * CH2";
 			} else {
-				swapInfo = "CH2 * CH1";
+				infoChanelsSwap = "CH2 * CH1";
 			}
 		}
 
-		//mixer
-		else if (name == mixerGpu.channelSelect.getName()) {
-			guiRefresh();
-		}
+		//// Mixer
+		//else if (name == mixerGpu.channelSelect.getName()) {
+		//	guiRefresh();
+		//}
 	}
 }
 
@@ -1301,42 +1284,12 @@ void ofxSurfingMixer::Changed_params_AppSession(ofAbstractParameter & e) {
 	if (!bDisableCallbacks) {
 		std::string name = e.getName();
 
-		// exclude debugs
-		if (name != ""
-			&& name != "exclude") {
-			ofLogNotice(__FUNCTION__) << name << " : " << e;
-		}
-
-		if (false) {
-		}
-
-		else if (name == "MIXER MODE") {
-			switch (MODE_AppMixer) {
-
-				//case 0:
-				//	MODE_AppMixer_Name = "RUN";
-				//	//setActive(false);
-				//	break;
-
-			case 1:
-				MODE_AppMixer_Name = "MODE 1 BLEND";
-				break;
-
-			case 2:
-				MODE_AppMixer_Name = "MODE 2 MIXER";
-				break;
-
-			default:
-				MODE_AppMixer_Name = "UNKNOWN";
-				break;
-			}
-		}
 #ifdef INCLUDE_ofxGui
-		else if (name == "GUI POSITION") {
+		if (name == positionGui.getName()) {
 			gui.setPosition(positionGui.get().x, positionGui.get().y);
 		}
 #endif
-		else if (name == "ACTIVE") {
+		if (name == bModeActive.getName()) {
 			setActive(bModeActive);
 		}
 
@@ -1345,7 +1298,7 @@ void ofxSurfingMixer::Changed_params_AppSession(ofAbstractParameter & e) {
 		// workflow
 		// clear fbos to void freeze
 		else if (name == bEnableChannel1.getName() || name == bEnableChannel2.getName()) {
-			//clear fbo's
+			// clear fbo's
 			fbo_Input_1.begin();
 			ofClear(0, 255);
 			fbo_Input_1.end();
@@ -1366,10 +1319,6 @@ void ofxSurfingMixer::Changed_params_AppSession(ofAbstractParameter & e) {
 			ofClear(0, 255);
 			fbo_Mixer_B.end();
 		}
-
-		else if (name == bShowPreview.getName()) {
-			//gUser->getControl(bShowBackgrounds.getName())->setEnabled(bShowPreview.get());
-		}
 	}
 }
 
@@ -1383,7 +1332,7 @@ void ofxSurfingMixer::setPathGlobal(std::string s) //must call before setup. dis
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::loadParams(ofParameterGroup & g, std::string path) {
-	ofLogNotice(__FUNCTION__) << path;
+	ofLogNotice("ofxSurfingMixer") << "loadParams " << path;
 
 	ofXml settings;
 	settings.load(path);
@@ -1395,7 +1344,7 @@ void ofxSurfingMixer::saveParams(ofParameterGroup & g, std::string path) {
 	//TODO:
 	//if (!bEnableAutosave && !bDisableCallbacks)//reduce double log when autosave happens
 	{
-		ofLogNotice(__FUNCTION__) << path;
+		ofLogNotice("ofxSurfingMixer") << "saveParams " << path;
 	}
 
 	ofXml settings;
@@ -1405,56 +1354,43 @@ void ofxSurfingMixer::saveParams(ofParameterGroup & g, std::string path) {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::guiRefresh() {
-	//if (0)
-	{
-		ofLogNotice(__FUNCTION__);
+	ofLogNotice("ofxSurfingMixer") << "guiRefresh";
 
-		//--
+	//--
 
-		//--
-
-		//workflow: set a default mode if all are disabled
-		if (!bEnableBlend && !bEnableMixer) {
-			MODE_AppMixer = 2;
-			bEnableMixer = true;
-		}
-
-		//----
-
-		// internal ofxGui
-#ifdef INCLUDE_ofxGui
-		// blend gui pannel
-		auto & gInternal = gui.getGroup("INTERNAL"); //1st level
-		//gInternal.minimize();
-
-		auto & gGuiPos = gInternal.getGroup("GUI POSITION"); //2nd level
-		gGuiPos.minimize();
-
-		// addon settings
-		auto & gSettings = gui.getGroup(params_Basic.getName()); //1st level
-
-		// debug
-		auto & gDebug = gSettings.getGroup("BACKGROUNDS"); //2nd level
-		gDebug.minimize();
-
-		// modes
-		auto & gBlend = gSettings.getGroup(params_Blend.getName()); //2nd level
-
-		// collapse all
-		gBlend.minimize();
-
-		// modes
-		//if (bEnableBlend) {
-		//	gBlend.maximize();
-		//} else if (bEnableMixer) {
-		//	gBlend.minimize();
-		//}
-
-		auto & gMixer = gSettings.getGroup(params_Mixer.getName());
-		gMixer.minimize();
-
-#endif
+	//workflow: set a default mode if all are disabled
+	if (!bEnableBlend && !bEnableMixer) {
+		MODE_AppMixer = 2;
+		bEnableMixer = true;
 	}
+
+	//----
+
+	// internal ofxGui
+#ifdef INCLUDE_ofxGui
+	//// gui pannel
+	//auto & gInternal = gui.getGroup("INTERNAL"); //1st level
+	////gInternal.minimize();
+
+	//auto & gGuiPos = gInternal.getGroup("GUI POSITION"); //2nd level
+	//gGuiPos.minimize();
+
+	// addon settings
+	auto & gSettings = gui.getGroup(params_Preset.getName()); //1st level
+
+	// debug
+	auto & gDebug = gSettings.getGroup("BACKGROUNDS"); //2nd level
+	gDebug.minimize();
+
+	// modes
+	auto & gBlend = gSettings.getGroup(params_Blend.getName()); //2nd level
+
+	// collapse all
+	gBlend.minimize();
+
+	auto & gMixer = gSettings.getGroup(params_Mixer.getName());
+	gMixer.minimize();
+#endif
 }
 
 //--------------------------------------------------------------
@@ -1488,4 +1424,36 @@ void ofxSurfingMixer::drawPreviewsCheckerboard(float x, float y, float width, fl
 
 	ofPopMatrix();
 	ofPopStyle();
+}
+//--------------------------------------------------------------
+void ofxSurfingMixer::drawPreviewBorders(float x, float y, float w, float h) {
+	ofPushStyle();
+	ofNoFill();
+	float pad = 1.0f;
+	ofSetLineWidth(3.0f * pad);
+	//ofSetColor(32, 255);//dark
+	ofSetColor(255, 64); //white
+	//ofDrawRectangle(x - pad, y - pad, w + 2 * pad, h + 2 * pad);
+	ofDrawRectRounded(x - pad, y - pad, w + 2 * pad, h + 2 * pad, 5.0f);
+	ofPopStyle();
+}
+//--------------------------------------------------------------
+void ofxSurfingMixer::setPositionPreview(glm::vec2 pos) {
+	positionPreview = pos;
+}
+//--------------------------------------------------------------
+void ofxSurfingMixer::setToggleActive() {
+	setActive(!bModeActive.get());
+}
+//--------------------------------------------------------------
+void ofxSurfingMixer::setToggleGuiVisible() {
+	setGuiVisible(!bGui.get());
+}
+//--------------------------------------------------------------
+ofParameterGroup & ofxSurfingMixer::getParamsPreset() {
+	return params_Preset;
+}
+//--------------------------------------------------------------
+void ofxSurfingMixer::setAutoSave(bool b) {
+	bEnableAutosave = b;
 }

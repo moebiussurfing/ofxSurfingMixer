@@ -6,6 +6,7 @@ void ofApp::setup() {
 	ofSetWindowPosition(-1920, 30);
 	ofSetWindowTitle("ofxSurfingMixer");
 
+	mixer.setLogLevel(OF_LOG_VERBOSE);
 	mixer.setup();
 }
 

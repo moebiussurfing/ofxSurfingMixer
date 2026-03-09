@@ -17,13 +17,13 @@
 // 2. Mixer
 #include "ofxGpuMixer.h"
 
-//app modes
+// App modes
 #define NUM_MODES_APP 3
-//we can handle many app modes to change behavior
+// we can handle many app modes to change behavior
 
 #include "ofxSurfingHelpers.h"
 
-//-
+//-----------------------------
 
 class ofxSurfingMixer : public ofBaseApp {
 
@@ -43,45 +43,30 @@ private:
 
 	//--
 
-	// parameters for presets
-
 public:
-	//--------------------------------------------------------------
-	ofParameterGroup & getParams_Mixer() {
-		return params_Preset;
-	}
+	// parameters for presets
+	ofParameterGroup & getParamsPreset();
 
 	//--
 
 private:
-	bool bGuiAdv = true;
+	bool bGuiAdvanced = true;
 
 	//--
 
+	ofParameterGroup params_Preset;
 	ofParameterGroup params_Control;
-	ofParameterGroup params_Basic;
 
 	ofParameterGroup params_UserGui;
 	ofParameterGroup params_AppSession;
 
-	ofParameterGroup params_Preset;
-
 	//----
-
-	// API
-
-public:
-	void setToggleFX(bool b);
-
-	//-
 
 private:
 	void reallocate(int w, int h);
 	void resizeFbos(int w, int h);
 
 public:
-	// TODO:
-	// to route to the fx's?
 	void begin_PRE_Channel_1();
 	void end_PRE_Channel_1();
 	void begin_PRE_Channel_2();
@@ -125,14 +110,14 @@ private:
 
 	//-
 
-	// blender
+	// Blender
 #ifdef INCLUDE_BLEND_MODE
 	ofxPSBlend psBlend;
 #endif
 
 	//--
 
-	// params
+	// Parameters
 
 private:
 	// Control
@@ -144,7 +129,7 @@ private:
 	ofParameter<bool> bShowPreview { "SHOW PREVIEW", true };
 	ofParameter<bool> bSwapChannels { "SWAP CHANNELS", false };
 	ofParameter<bool> bShowBackgrounds { "SHOW BG TINTS", false };
-	ofParameter<std::string> swapInfo { "", "" };
+	ofParameter<std::string> infoChanelsSwap { "Chans", "" };
 	ofParameter<int> blendMode { "BLEND MODE", 0, 0, 24 };
 	ofParameter<std::string> blendName { "", "" };
 
@@ -175,52 +160,23 @@ private:
 	//--
 
 private:
-	//--------------------------------------------------------------
-	void drawPreviewBorders(float x, float y, float w, float h) {
-		ofPushStyle();
-		ofNoFill();
-		float pad = 1.0f;
-		ofSetLineWidth(3.0f * pad);
-		//ofSetColor(32, 255);//dark
-		ofSetColor(255, 64); //white
-		//ofDrawRectangle(x - pad, y - pad, w + 2 * pad, h + 2 * pad);
-		ofDrawRectRounded(x - pad, y - pad, w + 2 * pad, h + 2 * pad, 5.0f);
-		ofPopStyle();
-	}
-
-	//-
-
+	void drawPreviewBorders(float x, float y, float w, float h);
 	ofParameter<glm::vec2> positionPreview;
 
 public:
-	//--------------------------------------------------------------
-	void setPositionPreview(glm::vec2 pos) {
-		positionPreview = pos;
-	}
-
-	//------------------------------------------------------------------------------
+	void setPositionPreview(glm::vec2 pos);
 
 	void setActive(bool b);
-	//--------------------------------------------------------------
-	void setToggleActive() {
-		setActive(!bModeActive.get());
-	}
-	//--------------------------------------------------------------
-	void setToggleGuiVisible() {
-		setGuiVisible(!bGui.get());
-	}
+	void setToggleActive();
+	void setToggleGuiVisible();
 	void setGuiVisible(bool b);
 
 	//--
 
 	void setLogLevel(ofLogLevel level);
-	void setKey_MODE_App(int k);
 	void setPathGlobal(std::string s); //must call before setup. disabled by default
 
-	//--------------------------------------------------------------
-	void setAutoSave(bool b) {
-		bEnableAutosave = b;
-	}
+	void setAutoSave(bool b);
 
 	//--
 
@@ -258,13 +214,13 @@ private:
 	void Changed_params_AppSession(ofAbstractParameter & e);
 
 private:
-	// keys
+	// Keys
 	void keyPressed(ofKeyEventArgs & eventArgs);
 	void keyReleased(ofKeyEventArgs & eventArgs);
 	void addKeysListeners();
 	void removeKeysListeners();
 
-	// mouse
+	// Mouse
 	void mouseDragged(ofMouseEventArgs & eventArgs);
 	void mousePressed(ofMouseEventArgs & eventArgs);
 	void mouseReleased(ofMouseEventArgs & eventArgs);
@@ -274,7 +230,7 @@ private:
 	//-
 
 private:
-	// path folder and filenames
+	// Path folder and filenames
 	std::string path_GLOBAL;
 	std::string path_Params_AppSession;
 	std::string path_Params_Preset;
@@ -285,7 +241,7 @@ private:
 
 	void guiRefresh();
 
-	// labels
+	// Labels
 	ofTrueTypeFont myFont;
 	ofTrueTypeFont myFontHelp;
 	ofTrueTypeFont myFontSmall;
