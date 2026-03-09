@@ -211,7 +211,7 @@ void ofxSurfingMixer::setupParamsMixer() {
 	// for the settings only
 	// different from guiSetup() bc there are for gui only
 	params_Mixer.add(mixerGpu.getParameterGroup());
-	params_Mixer.add(colorBackground);
+	//params_Mixer.add(colorBackground);
 	mixerGpu.reset();
 
 	//--
@@ -964,7 +964,7 @@ void ofxSurfingMixer::setup() {
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::setupCallbacks() {
-
+	// Mode Blend
 	parameterListeners.push(bEnableModeBlend.newListener([this](bool & value) {
 		if (bDisableCallbacks) return;
 
@@ -980,6 +980,7 @@ void ofxSurfingMixer::setupCallbacks() {
 		if (!bEnableModeMixer && !bEnableModeBlend) bEnableModeMixer = true;
 	}));
 
+	// Mode Mixer
 	parameterListeners.push(bEnableModeMixer.newListener([this](bool & value) {
 		if (bDisableCallbacks) return;
 
@@ -994,6 +995,7 @@ void ofxSurfingMixer::setupCallbacks() {
 		if (!bEnableModeMixer && !bEnableModeBlend) bEnableModeBlend = true;
 	}));
 
+	// Blend Mode index
 #ifdef INCLUDE_BLEND_MODE
 	parameterListeners.push(blendMode.newListener([this](int &) {
 		if (bDisableCallbacks || !bBlendRunning) return;
@@ -1004,6 +1006,7 @@ void ofxSurfingMixer::setupCallbacks() {
 	}));
 #endif
 
+	// bResetBackgrounds
 	parameterListeners.push(bResetBackgrounds.newListener([this](bool & value) {
 		if (bDisableCallbacks || !value) return;
 
@@ -1026,23 +1029,27 @@ void ofxSurfingMixer::setupCallbacks() {
 		bDisableCallbacks = false;
 	}));
 
+	// Swap channels
 	parameterListeners.push(bSwapChannels.newListener([this](bool & value) {
 		if (bDisableCallbacks) return;
 		infoChanelsSwap = (value ? "CH2 * CH1" : "CH1 * CH2");
 	}));
 
 #ifdef INCLUDE_ofxGui
+	// Gui position
 	parameterListeners.push(positionGui.newListener([this](glm::vec2 & value) {
 		if (bDisableCallbacks) return;
 		gui.setPosition(value.x, value.y);
 	}));
 #endif
 
+	// Active Mode
 	parameterListeners.push(bModeActive.newListener([this](bool & value) {
 		if (bDisableCallbacks) return;
 		setActive(value);
 	}));
 
+	// Enable ch 1
 	parameterListeners.push(bEnableChannel1.newListener([this](bool &) {
 		if (bDisableCallbacks) return;
 
@@ -1067,6 +1074,7 @@ void ofxSurfingMixer::setupCallbacks() {
 		fbo_Mixer_B.end();
 	}));
 
+	// Enable ch 2
 	parameterListeners.push(bEnableChannel2.newListener([this](bool &) {
 		if (bDisableCallbacks) return;
 
@@ -1357,24 +1365,24 @@ void ofxSurfingMixer::guiRefresh() {
 
 	//----
 
-	// internal ofxGui
+	// Internal ofxGui
 #ifdef INCLUDE_ofxGui
 	//// gui pannel
-	//auto & gInternal = gui.getGroup("INTERNAL"); //1st level
+	//auto & gInternal = gui.getGroup("INTERNAL"); // 1st level
 	////gInternal.minimize();
 
-	//auto & gGuiPos = gInternal.getGroup("GUI POSITION"); //2nd level
+	//auto & gGuiPos = gInternal.getGroup("GUI POSITION"); // 2nd level
 	//gGuiPos.minimize();
 
 	// addon settings
-	auto & gSettings = gui.getGroup(params_Preset.getName()); //1st level
+	auto & gSettings = gui.getGroup(params_Preset.getName()); // 1st level
 
 	// debug
-	auto & gDebug = gSettings.getGroup("BACKGROUNDS"); //2nd level
+	auto & gDebug = gSettings.getGroup("BACKGROUNDS"); // 2nd level
 	gDebug.minimize();
 
 	// modes
-	auto & gBlend = gSettings.getGroup(params_Blend.getName()); //2nd level
+	auto & gBlend = gSettings.getGroup(params_Blend.getName()); // 2nd level
 
 	// collapse all
 	gBlend.minimize();
@@ -1435,16 +1443,20 @@ void ofxSurfingMixer::setPositionPreview(glm::vec2 pos) {
 //--------------------------------------------------------------
 void ofxSurfingMixer::setToggleActive() {
 	setActive(!bModeActive.get());
+	ofLogVerbose("ofxSurfingMixer") << "setToggleActive() " << bModeActive.get();
 }
 //--------------------------------------------------------------
 void ofxSurfingMixer::setToggleGuiVisible() {
 	setGuiVisible(!bGui.get());
+	ofLogVerbose("ofxSurfingMixer") << "setToggleGuiVisible() " << bGui.get();
 }
 //--------------------------------------------------------------
 ofParameterGroup & ofxSurfingMixer::getParamsPreset() {
+	ofLogVerbose("ofxSurfingMixer") << "getParamsPreset()";
 	return params_Preset;
 }
 //--------------------------------------------------------------
 void ofxSurfingMixer::setAutoSave(bool b) {
 	bEnableAutosave = b;
+	ofLogVerbose("ofxSurfingMixer") << "setAutoSave() "<<b;
 }

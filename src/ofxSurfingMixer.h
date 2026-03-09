@@ -130,7 +130,7 @@ private:
 	ofParameter<bool> bShowPreview { "SHOW PREVIEW", true };
 	ofParameter<bool> bSwapChannels { "SWAP CHANNELS", false };
 	ofParameter<bool> bShowBackgrounds { "SHOW BG TINTS", false };
-	ofParameter<std::string> infoChanelsSwap { "Chans", "" };
+	ofParameter<std::string> infoChanelsSwap { "ROUTE", "" };
 	ofParameter<int> blendMode { "BLEND MODE", 0, 0, 24 };
 	ofParameter<std::string> blendName { "", "" };
 
