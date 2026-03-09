@@ -975,7 +975,8 @@ void ofxSurfingMixer::drawGui() {
 	if (1) {
 		//blend and mask
 		if (1) {
-			if (bGuiAdv) {
+			if (bGuiAdv)
+			{
 #ifdef INCLUDE_ofxGui
 				gui_Control.draw(); //all guis together
 #endif
@@ -1082,18 +1083,18 @@ void ofxSurfingMixer::setup() {
 	//gui internal
 	//gui theme
 #ifdef INCLUDE_ofxGui
-	std::string str = "assets/fonts/overpass-mono-bold.otf";
-	ofFile file(str);
-	if (file.exists()) {
-		ofxGuiSetFont(str, 9);
-	} else {
-		ofLogError(__FUNCTION__) << "setup() ofxGuiSetFont '" << str << "' NOT FOUND!";
-	}
-	ofxGuiSetDefaultHeight(20);
-	ofxGuiSetBorderColor(32);
-	ofxGuiSetFillColor(ofColor(48));
-	ofxGuiSetTextColor(ofColor::white);
-	ofxGuiSetHeaderColor(ofColor(24));
+	//std::string str = "assets/fonts/overpass-mono-bold.otf";
+	//ofFile file(str);
+	//if (file.exists()) {
+	//	ofxGuiSetFont(str, 9);
+	//} else {
+	//	ofLogError(__FUNCTION__) << "setup() ofxGuiSetFont '" << str << "' NOT FOUND!";
+	//}
+	//ofxGuiSetDefaultHeight(20);
+	//ofxGuiSetBorderColor(32);
+	//ofxGuiSetFillColor(ofColor(48));
+	//ofxGuiSetTextColor(ofColor::white);
+	//ofxGuiSetHeaderColor(ofColor(24));
 
 	//setup gui advanced (ofxGui)
 	gui_Control.setup("ofxSurfingMixer");

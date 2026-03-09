@@ -25,7 +25,7 @@
 #endif
 
 // 3. mask
-#define INCLUDE_MASK_MODE
+#define INCLUDE_MASK_MODE // -> not impplemented?
 #ifdef INCLUDE_MASK_MODE
 	#include "ofxAlphaMask.h"
 #endif
@@ -68,7 +68,7 @@ public:
 	//--
 
 private:
-	bool bGuiAdv = false;
+	bool bGuiAdv = true;
 
 	//--
 
