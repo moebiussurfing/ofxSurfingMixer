@@ -5,7 +5,7 @@ ofxSurfingMixer
 **ofxSurfingMixer** is an **openFrameworks** addon for GPU mixing 2 video channels y realtime.
 
 ## Screenshots
-[]("Capture.PNG")
+![]("Capture.PNG")
 
 ## Features
 - Bundles 2 different modes: Blend and Mixer.
