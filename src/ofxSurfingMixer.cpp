@@ -951,13 +951,13 @@ void ofxSurfingMixer::setup() {
 
 	//--
 
-	// advanced gui - ofxGuiExtended
+	// Advanced gui - ofxImGui
 	guiSetup();
 	guiCustomize();
 
 	//--
 
-	// callbacks
+	// Callbacks
 
 	ofAddListener(params_UserGui.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_AppSession);
 	ofAddListener(params_Internal.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_AppSession);
@@ -966,7 +966,7 @@ void ofxSurfingMixer::setup() {
 
 	//--------------------------------------------------------------
 
-	// startup
+	// Startup
 
 	bDisableCallbacks = false;
 
@@ -982,11 +982,11 @@ void ofxSurfingMixer::startup() {
 
 	//-
 
-	// settings
+	// Settings
 	loadParams(params_AppSession, path_GLOBAL + path_Params_AppSession);
 	loadParams(params_Preset, path_GLOBAL + path_Params_Preset); // all
 
-	guiRefresh();
+	//guiRefresh();
 
 #ifdef INCLUDE_BLEND_MODE
 	std::string message = ofToUpper(psBlend.getBlendMode(blendMode));
@@ -1050,11 +1050,11 @@ void ofxSurfingMixer::exit() {
 
 //--------------------------------------------------------------
 ofxSurfingMixer::~ofxSurfingMixer() {
-	// remove keys and mouse listeners
+	// Remove keys and mouse listeners
 	removeKeysListeners();
 	removeMouseListeners();
 
-	// remove params callbacks listeners
+	// Remove params callbacks listeners
 	ofRemoveListener(params_UserGui.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_AppSession);
 	ofRemoveListener(params_Internal.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_AppSession);
 	ofRemoveListener(params_Preset.parameterChangedE(), this, &ofxSurfingMixer::Changed_params_Settings);
