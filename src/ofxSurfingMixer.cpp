@@ -137,9 +137,7 @@ void ofxSurfingMixer::setupParamsInternal() {
 
 	//-
 
-	// internal
-
-	// params
+	// Internal params
 	bModeActive.set("ACTIVE", true);
 	MODE_AppMixer.set("MIXER MODE", 1, 1, NUM_MODES_APP);
 	MODE_AppMixer_Name.set("", "");
@@ -148,7 +146,6 @@ void ofxSurfingMixer::setupParamsInternal() {
 	bEnableAutosave.set("AUTO SAVE", false);
 	bGui.set("GUI", true);
 
-	// params internal
 	params_Internal.setName("INTERNAL");
 	params_Internal.add(MODE_AppMixer);
 	params_Internal.add(MODE_AppMixer_Name);
@@ -986,7 +983,7 @@ void ofxSurfingMixer::startup() {
 	loadParams(params_AppSession, path_GLOBAL + path_Params_AppSession);
 	loadParams(params_Preset, path_GLOBAL + path_Params_Preset); // all
 
-	//guiRefresh();
+	guiRefresh();
 
 #ifdef INCLUDE_BLEND_MODE
 	std::string message = ofToUpper(psBlend.getBlendMode(blendMode));
