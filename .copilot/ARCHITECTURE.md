@@ -24,10 +24,10 @@ It also includes a sample app (`src/ofApp.*`) that shows how to integrate the ad
     - `ofxSurfingMixer mixer`
     - `ofxSceneTEST scene`
   - Per-frame flow:
-    1. Draws scene into `Channel 1` (`begin_PRE_Channel_1` / `end_PRE_Channel_1`).
-    2. Draws scene into `Channel 2` (`begin_PRE_Channel_2` / `end_PRE_Channel_2`).
+    1. Draws scene into `Channel 1` (`begin_CH1` / `end_CH1`).
+    2. Draws scene into `Channel 2` (`begin_CH2` / `end_CH2`).
     3. Calls `mixer.update()`.
-    4. Draws output via `mixer.drawMixer()` and UI via `mixer.drawGui()`.
+    4. Draws output via `mixer.draw()` and UI via `mixer.drawGui()`.
 
 ### Addon
 
@@ -54,8 +54,8 @@ It also includes a sample app (`src/ofApp.*`) that shows how to integrate the ad
 ### Per-frame flow in `ofxSurfingMixer`
 
 1. **Per-channel capture**
-   - `begin_PRE_Channel_1` / `end_PRE_Channel_1`
-   - `begin_PRE_Channel_2` / `end_PRE_Channel_2`
+   - `begin_CH1` / `end_CH1`
+   - `begin_CH2` / `end_CH2`
    - If `bEnableFx` is disabled, it bypasses directly to `begin/end_Channel_X`.
 
 2. **Composition**
@@ -64,7 +64,7 @@ It also includes a sample app (`src/ofApp.*`) that shows how to integrate the ad
      - Runs `begin_Mix()` + `end_Mix()` to produce `fbo_MixOut`.
 
 3. **Output**
-   - `drawMixer()` draws `fbo_MixOut` to screen.
+   - `draw()` draws `fbo_MixOut` to screen.
    - `drawGui()` draws panels and optional previews.
 
 ---
@@ -181,7 +181,7 @@ This avoids the global callback approach using `if (name == ...)`, reducing coup
 3. `update()`:
    - runs `updateEngine()` + `updateMixer()`.
 4. `draw` (from host app):
-   - runs `drawMixer()` + `drawGui()`.
+   - runs `draw()` + `drawGui()`.
 5. `exit()` / destructor:
    - persists state and removes input listeners.
 
