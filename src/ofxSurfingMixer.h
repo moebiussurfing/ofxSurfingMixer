@@ -38,6 +38,7 @@ public:
 	void windowResized(int w, int h);
 
 private:
+	void setupCallbacks();
 	void startup();
 	void drawPreviews(float x, float y, float _w);
 
@@ -125,7 +126,7 @@ private:
 
 	// 1. Blend
 	ofParameterGroup params_Blend { "MODE BLEND" };
-	ofParameter<bool> bEnableBlend { "ENABLE MODE BLEND", false };
+	ofParameter<bool> bEnableModeBlend { "ENABLE MODE BLEND", false };
 	ofParameter<bool> bShowPreview { "SHOW PREVIEW", true };
 	ofParameter<bool> bSwapChannels { "SWAP CHANNELS", false };
 	ofParameter<bool> bShowBackgrounds { "SHOW BG TINTS", false };
@@ -135,7 +136,7 @@ private:
 
 	// 2. Mixer
 	ofParameterGroup params_Mixer { "MODE MIXER" };
-	ofParameter<bool> bEnableMixer { "ENABLE MODE MIXER", false };
+	ofParameter<bool> bEnableModeMixer { "ENABLE MODE MIXER", false };
 
 	ofParameterGroup params_Backgrounds { "BACKGROUNDS" };
 	ofParameter<bool> bEnableChannel1 { "CHANNEL 1", true };
@@ -210,8 +211,7 @@ private:
 	//-
 
 private:
-	void Changed_params_Settings(ofAbstractParameter & e);
-	void Changed_params_AppSession(ofAbstractParameter & e);
+	ofEventListeners parameterListeners;
 
 private:
 	// Keys
