@@ -8,7 +8,8 @@ ofxSurfingMixer
 []("Capture.PNG")
 
 ## Features
-- Bundles `ofxPSBlend` and `ofxGpuMixer` features.
+- Bundles 2 different modes: Blend and Mixer.
+- Features `ofxPSBlend` and `ofxGpuMixer`.
 
 ## Usage
 
@@ -53,11 +54,16 @@ void ofApp::draw() {
 - ofxSceneTEST -> FOR TESTING ONLY
 
 ## Tested systems
-- **Windows10** / **VS2026** / **OF 0.12.1**
+- **Windows11** / **VS2026** / **OF 0.12.1**
 
 ## Author
 Addon by **@moebiusSurfing**
-*(ManuMolina). 2020.*
+*(ManuMolina). 2020-2026.*
 
 ## License
 *MIT License.*
+
+## TODO
+- ImGui.
+- Custom sizes, portrait.
+- Output FX channel.
