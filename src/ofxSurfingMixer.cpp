@@ -864,21 +864,10 @@ void ofxSurfingMixer::drawGui() {
 
 	// preview monitors
 	drawPreviews(positionPreview.get().x, positionPreview.get().y, window_W / 9.0f);
-
-	//---
-
-	// help info:
-	float w = ofxSurfingHelpers::getWidthBBtextBoxed(myFontHelp, helpInfo);
-	float h = ofxSurfingHelpers::getHeightBBtextBoxed(myFontHelp, helpInfo);
-	float x = ofGetWidth() * 0.5 - w * 0.5 - w; //displaced
-	float y = ofGetHeight() * 0.5 - h * 0.5;
-	ofxSurfingHelpers::drawTextBoxed(myFontHelp, helpInfo, x, y);
 }
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::updateMixer() {
-
-	//--
 
 	// mixer
 	if (bEnableMixer) {

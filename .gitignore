@@ -134,3 +134,5 @@ Desktop.ini
 *.log
 *.sql
 *.sqlite
+example/bin/data/ofxSurfingMixer/Preset_Settings.xml
+example/bin/data/ofxSurfingMixer/AppSession_Settings.xml
