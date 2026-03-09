@@ -24,12 +24,6 @@
 	#include "ofxGpuMixer.h"
 #endif
 
-// 3. mask
-#define INCLUDE_MASK_MODE // -> not impplemented?
-#ifdef INCLUDE_MASK_MODE
-	#include "ofxAlphaMask.h"
-#endif
-
 //app modes
 #define NUM_MODES_APP 3
 //we can handle many app modes to change behaviour
@@ -146,14 +140,8 @@ private:
 
 	//--
 
-	// 3. MASK
-#ifdef INCLUDE_MASK_MODE
-	ofxAlphaMask alphaMask;
-#endif
-
 	// TODO:
 	// workaround to avoid startup crashes by 'recursive callbacks'...?
-	bool bMaskRunning = false;
 	bool bBlendRunning = false;
 
 	//-
@@ -185,10 +173,6 @@ private:
 	ofParameter<std::string> swapInfo { "", "" };
 	ofParameter<int> blendMode { "BLEND MODE", 0, 0, 24 };
 	ofParameter<std::string> blendName { "", "" };
-
-	// 3. mask
-	ofParameterGroup params_Mask { "MODE MASK" };
-	ofParameter<bool> ENABLE_MASK { "ENABLE MODE MASK", false };
 
 	//2. mixer
 	ofParameterGroup params_Mixer { "MODE MIXER" };
@@ -341,7 +325,6 @@ private:
 	std::string path_Params_AppSession;
 	std::string path_Params_Preset;
 	std::string path_Params_Mixer;
-	std::string path_Params_Mask;
 
 	void loadParams(ofParameterGroup & g, std::string path);
 	void saveParams(ofParameterGroup & g, std::string path);

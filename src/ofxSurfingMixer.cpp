@@ -59,7 +59,7 @@ ofxSurfingMixer::ofxSurfingMixer() {
 	helpInfo += "\n";
 	helpInfo += " <|>              BLEND TYPE";
 	helpInfo += "\n";
-	helpInfo += "TAB               MODE BLEND-MIX-MASK";
+	helpInfo += "TAB               MODE BLEND-MIX";
 	helpInfo += "\n";
 	helpInfo += "TAB+Ctrl          MODE FX";
 	helpInfo += "\n";
@@ -303,13 +303,11 @@ void ofxSurfingMixer::setupParamsMixer() {
 	params_Control.add(swapInfo);
 	params_Control.add(ENABLE_BLEND);
 	params_Control.add(ENABLE_MIXER);
-	params_Control.add(ENABLE_MASK);
 	params_Basic.add(params_Control);
 
 	// modes
 	params_Basic.add(params_Backgrounds);
 	params_Basic.add(params_Blend);
-	params_Basic.add(params_Mask);
 	params_Basic.add(params_Mixer);
 
 	//--
@@ -380,7 +378,7 @@ void ofxSurfingMixer::begin_Channel_1() {
 
 	//--
 
-	if (ENABLE_MASK || ENABLE_BLEND) {
+	if (ENABLE_BLEND) {
 		fbo_Input_1.begin();
 	}
 
@@ -414,7 +412,7 @@ void ofxSurfingMixer::end_Channel_1() {
 
 	//--
 
-	if (ENABLE_MASK || ENABLE_BLEND) {
+	if (ENABLE_BLEND) {
 		fbo_Input_1.end();
 	}
 
@@ -437,7 +435,7 @@ void ofxSurfingMixer::end_Channel_1() {
 	//----
 
 	// this mode do not requires process inside fbo's..
-	if (ENABLE_MASK || ENABLE_BLEND) {
+	if (ENABLE_BLEND) {
 		//process
 
 #ifdef INCLUDE_BLEND_MODE
@@ -479,7 +477,7 @@ void ofxSurfingMixer::end_Channel_1() {
 void ofxSurfingMixer::begin_Channel_2() {
 	//ofLogVerbose(__FUNCTION__) << "begin_Channel_2";
 
-	if (ENABLE_MASK || ENABLE_BLEND) {
+	if (ENABLE_BLEND) {
 		//blend target
 		fbo_Input_2.begin();
 	}
@@ -511,7 +509,7 @@ void ofxSurfingMixer::end_Channel_2() {
 
 	//ofLogVerbose(__FUNCTION__) << "end_Channel_2";
 
-	if (ENABLE_MASK || ENABLE_BLEND) {
+	if (ENABLE_BLEND) {
 		fbo_Input_2.end();
 	}
 
@@ -568,44 +566,12 @@ void ofxSurfingMixer::begin_Mix() {
 #endif
 
 	//-
-
-	// 3. mask
-
-#ifdef INCLUDE_MASK_MODE
-	if (ENABLE_MASK) {
-		ofSetColor(255, 255);
-
-		if (!swapChannels)
-			alphaMask.begin(fbo_Input_2.getTexture());
-		else
-			alphaMask.begin(fbo_Input_1.getTexture());
-	}
-#endif
-
-	//-
 }
 
 //--------------------------------------------------------------
 void ofxSurfingMixer::end_Mix() {
 	//ofLogVerbose(__FUNCTION__) << "end_Mix";
 	//ofLogVerbose(__FUNCTION__) << "---------------------------------------";
-
-	//--
-
-	// 3. mask
-
-#ifdef INCLUDE_MASK_MODE
-	if (ENABLE_MASK) {
-		//draws the source content (not the mask layer)
-		if (!swapChannels) {
-			fbo_Input_1.draw(0, 0);
-		} else {
-			fbo_Input_2.draw(0, 0);
-		}
-
-		alphaMask.end();
-	}
-#endif
 
 	//--
 
@@ -635,12 +601,6 @@ void ofxSurfingMixer::drawMixer() {
 
 #ifdef INCLUDE_BLEND_MODE
 	if (ENABLE_BLEND) {
-		fbo_MixOut.draw(0, 0, ofGetWidth(), ofGetHeight());
-	}
-#endif
-
-#ifdef INCLUDE_MASK_MODE
-	if (ENABLE_MASK) {
 		fbo_MixOut.draw(0, 0, ofGetWidth(), ofGetHeight());
 	}
 #endif
@@ -963,8 +923,6 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 		//}
 
 		myFont.drawString(str, xx0 + xLabel, yy);
-	} else if (ENABLE_MASK) {
-		myFont.drawString("MASK\t\t\t", xx0 + xLabel, yy);
 	}
 }
 
@@ -972,48 +930,37 @@ void ofxSurfingMixer::drawPreviews(float x, float y, float _w) {
 void ofxSurfingMixer::drawGui() {
 	//ofLogNotice(__FUNCTION__);
 
-	if (1) {
-		//blend and mask
-		if (1) {
-			if (bGuiAdv)
-			{
+	//blend and mask
+	if (bGuiAdv) {
 #ifdef INCLUDE_ofxGui
-				gui_Control.draw(); //all guis together
+		gui_Control.draw(); //all guis together
 #endif
-			}
-		}
-
-		//-
-
-		// preview monitors
-		if (1) {
-			drawPreviews(preview_Position.get().x, preview_Position.get().y, window_W / 9.0f);
-		}
-
-		//-
-
-		// mixer
-#ifdef INCLUDE_MIXER_MODE
-		if (1) {
-
-			// gui internal
-	#ifdef INCLUDE_ofxGui
-			gui_Mixer.draw();
-	#endif
-		}
-#endif
-
-		//---
-
-		// help info:
-		if (1) {
-			float w = ofxSurfingHelpers::getWidthBBtextBoxed(myFontHelp, helpInfo);
-			float h = ofxSurfingHelpers::getHeightBBtextBoxed(myFontHelp, helpInfo);
-			float x = ofGetWidth() * 0.5 - w * 0.5 - w; //displaced
-			float y = ofGetHeight() * 0.5 - h * 0.5;
-			ofxSurfingHelpers::drawTextBoxed(myFontHelp, helpInfo, x, y);
-		}
 	}
+
+	//-
+
+	// preview monitors
+	drawPreviews(preview_Position.get().x, preview_Position.get().y, window_W / 9.0f);
+
+	//-
+
+	// mixer
+#ifdef INCLUDE_MIXER_MODE
+
+	// gui internal
+	#ifdef INCLUDE_ofxGui
+	gui_Mixer.draw();
+	#endif
+#endif
+
+	//---
+
+	// help info:
+	float w = ofxSurfingHelpers::getWidthBBtextBoxed(myFontHelp, helpInfo);
+	float h = ofxSurfingHelpers::getHeightBBtextBoxed(myFontHelp, helpInfo);
+	float x = ofGetWidth() * 0.5 - w * 0.5 - w; //displaced
+	float y = ofGetHeight() * 0.5 - h * 0.5;
+	ofxSurfingHelpers::drawTextBoxed(myFontHelp, helpInfo, x, y);
 }
 
 //--------------------------------------------------------------
@@ -1040,7 +987,7 @@ void ofxSurfingMixer::updateMixer() {
 
 	//--
 
-	//blend/mask/mix the 2 channels
+	//blend/mix the 2 channels
 	begin_Mix();
 	end_Mix();
 }
@@ -1136,7 +1083,6 @@ void ofxSurfingMixer::setup() {
 	params_Preset.add(params_Basic); //all
 	//params_Preset.add(params_Mixer);
 	//params_Preset.add(params_Blend);
-	//params_Preset.add(params_Mask);
 
 	//--------------------------------------------------------------
 
@@ -1147,7 +1093,6 @@ void ofxSurfingMixer::setup() {
 	DISABLE_Callbacks = false;
 
 	startup();
-
 }
 
 //--------------------------------------------------------------
@@ -1162,7 +1107,6 @@ void ofxSurfingMixer::startup() {
 
 	loadParams(params_Preset, path_GLOBAL + path_Params_Preset); //all
 	//loadParams(params_Mixer, path_GLOBAL + path_Params_Mixer);
-	//loadParams(params_Mask, path_GLOBAL + path_Params_Mask);
 
 	guiRefresh();
 
@@ -1202,7 +1146,6 @@ void ofxSurfingMixer::updateEngine() {
 		saveParams(params_Preset, path_GLOBAL + path_Params_Preset);
 
 		//saveParams(params_Mixer, path_GLOBAL + path_Params_Mixer);
-		//saveParams(params_Mask, path_GLOBAL + path_Params_Mask);
 
 		timerLast_Autosave = ofGetElapsedTimeMillis();
 		if (true) ofLogNotice(__FUNCTION__) << "\t\t\t\t\t\t\t\t\t[AUTOSAVE]";
@@ -1253,7 +1196,6 @@ void ofxSurfingMixer::exit() {
 	saveParams(params_Preset, path_GLOBAL + path_Params_Preset); //all settings
 
 	//saveParams(params_Mixer, path_GLOBAL + path_Params_Mixer);
-	//saveParams(params_Mask, path_GLOBAL + path_Params_Mask);
 }
 
 //--------------------------------------------------------------
@@ -1515,7 +1457,6 @@ void ofxSurfingMixer::keyPressed(ofKeyEventArgs & eventArgs) {
 
 	if (key == 'G') {
 		bGuiAdv = !bGuiAdv;
-
 	}
 }
 
@@ -1639,14 +1580,8 @@ void ofxSurfingMixer::Changed_params_Settings(ofAbstractParameter & e) {
 		else if (name == ENABLE_BLEND.getName()) {
 			DISABLE_Callbacks = true;
 			if (ENABLE_BLEND) {
-				ENABLE_MASK = false;
 				ENABLE_MIXER = false;
 				MODE_AppMixer = 2;
-				//if (selectedTab != 0)
-				//{
-				//	selectedTab = 0;
-				//	gTabs->setActiveTab(selectedTab);
-				//}
 			}
 			DISABLE_Callbacks = false;
 
@@ -1655,28 +1590,7 @@ void ofxSurfingMixer::Changed_params_Settings(ofAbstractParameter & e) {
 			DISABLE_Callbacks = true;
 			if (ENABLE_MIXER) {
 				ENABLE_BLEND = false;
-				ENABLE_MASK = false;
 				MODE_AppMixer = 1;
-				//if (selectedTab != 1)
-				//{
-				//	selectedTab = 1;
-				//	gTabs->setActiveTab(selectedTab);
-				//}
-			}
-			DISABLE_Callbacks = false;
-
-			guiRefresh();
-		} else if (name == ENABLE_MASK.getName()) {
-			DISABLE_Callbacks = true;
-			if (ENABLE_MASK) {
-				ENABLE_BLEND = false;
-				ENABLE_MIXER = false;
-				MODE_AppMixer = 3;
-				//if (selectedTab != 2)
-				//{
-				//	selectedTab = 2;
-				//	gTabs->setActiveTab(selectedTab);
-				//}
 			}
 			DISABLE_Callbacks = false;
 
@@ -1797,10 +1711,6 @@ void ofxSurfingMixer::Changed_params_AppSession(ofAbstractParameter & e) {
 				MODE_AppMixer_Name = "MODE 2 MIXER";
 				break;
 
-			case 3:
-				MODE_AppMixer_Name = "MODE 3 MASK";
-				break;
-
 			default:
 				MODE_AppMixer_Name = "UNKNOWN";
 				break;
@@ -1908,7 +1818,7 @@ void ofxSurfingMixer::guiRefresh() {
 		//--
 
 		//workflow: set a default mode if all are disabled
-		if (!ENABLE_BLEND && !ENABLE_MASK && !ENABLE_MIXER) {
+		if (!ENABLE_BLEND && !ENABLE_MIXER) {
 			MODE_AppMixer = 2;
 			ENABLE_MIXER = true;
 		}
@@ -1959,44 +1869,34 @@ void ofxSurfingMixer::guiRefresh() {
 
 		// internal ofxGui
 	#ifdef INCLUDE_ofxGui
-		// blend and mask gui pannel (joined)
+		// blend gui pannel
 		auto & gInternal = gui_Control.getGroup("INTERNAL"); //1st level
 		//gInternal.minimize();
 
 		auto & gGuiPos = gInternal.getGroup("GUI POSITION"); //2nd level
 		gGuiPos.minimize();
 
-		//addon settings
+		// addon settings
 		auto & gSettings = gui_Control.getGroup(params_Basic.getName()); //1st level
 
-		//debug
+		// debug
 		auto & gDebug = gSettings.getGroup("BACKGROUNDS"); //2nd level
 		gDebug.minimize();
 
-		//modes
+		// modes
 		auto & gBlend = gSettings.getGroup(params_Blend.getName()); //2nd level
-		//auto &gMask = gSettings.getGroup(params_Mask.getName());//2nd level
 
-		//collapse all
+		// collapse all
 		gBlend.minimize();
-		//gMask.minimize();
 
 		//modes
-		if (ENABLE_MASK) {
-			gBlend.minimize();
-				//gMask.maximize();
-		#ifdef INCLUDE_MIXER_MODE
-					//gMixer.minimize();
-		#endif
-		} else if (ENABLE_BLEND) {
+		if (ENABLE_BLEND) {
 			gBlend.maximize();
-				//gMask.minimize();
 		#ifdef INCLUDE_MIXER_MODE
 					//gMixer.minimize();
 		#endif
 		} else if (ENABLE_MIXER) {
 			gBlend.minimize();
-				//gMask.minimize();
 		#ifdef INCLUDE_MIXER_MODE
 					//gMixer.maximize();
 		#endif

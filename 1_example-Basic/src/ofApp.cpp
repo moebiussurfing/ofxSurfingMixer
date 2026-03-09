@@ -4,6 +4,8 @@
 void ofApp::setup() {
 	ofSetFrameRate(60);
 	ofSetWindowPosition(-1920, 30);
+	ofSetWindowTitle("ofxSurfingMixer");
+
 	mixer.setup();
 }
 
