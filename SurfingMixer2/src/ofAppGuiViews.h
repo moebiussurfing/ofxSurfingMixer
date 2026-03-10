@@ -10,7 +10,7 @@ public:
 	void drawImGuiApp();
 	void drawImGuiSpecialWindows();
 	void drawImGuiWindow0();
-	void drawImGuiSpecialWindow1();
+	void drawImGuiWindow1();
 
 private:
 	ofApp* app = nullptr;

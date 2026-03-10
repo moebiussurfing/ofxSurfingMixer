@@ -1,22 +1,20 @@
 #pragma once
 #include "ofMain.h"
 
-
+#include "ofAppGuiViews.h"
 #include "ofxSurfingImGui.h"
 #include "ofxSurfingMixer.h"
 #include "ofxWindowApp.h"
-#include "ofAppGuiViews.h"
 
 #define USE_ofxNDI
 #ifdef USE_ofxNDI
 	#include "NDI_HelperReceiver.h"
+	#include "NDI_HelperSender.h"
 #endif
 
-class ofApp : public ofBaseApp
-{
+class ofApp : public ofBaseApp {
 public:
 	void setup();
-	void setupParameters();
 	void update();
 	void draw();
 	void drawGui();
@@ -28,23 +26,14 @@ public:
 
 	//--
 
-	// Gui manager
 	ofxSurfingGui ui;
-
 	void setupImGui();
+	ofParameter<bool> bGui { "ofApp", true };
 
-	ofParameter<bool> bGui{ "ofApp", true };
-	
 	//----
 
-	// Manager to Save/Load Layout manually
-
-	//--
-
-	// Scene functions
-
-	void updateScene(); // Generates random messages to test the Log window.
-	void drawScene();// Draws a Central Rectangle getting from the docking layout.
+	void updateScene();
+	void drawScene();
 
 	ofEasyCam cam;
 
@@ -53,6 +42,7 @@ public:
 #ifdef USE_ofxNDI
 	NDI_HelperReceiver ndi_CH1;
 	NDI_HelperReceiver ndi_CH2;
+	NDI_HelperSender ndiOut;
 #endif
 
 	ofxWindowApp w;

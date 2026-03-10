@@ -2,7 +2,7 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
-void ofAppGuiViews::setApp(ofApp* app_) {
+void ofAppGuiViews::setApp(ofApp * app_) {
 	app = app_;
 }
 
@@ -22,7 +22,7 @@ void ofAppGuiViews::drawImGui() {
 //--
 
 // 1. Docking magic
-#if 0
+#if 1
 		app->ui.BeginDocking();
 		{
 		}
@@ -60,7 +60,7 @@ void ofAppGuiViews::drawImGuiSpecialWindows() {
 
 	//--
 
-	drawImGuiSpecialWindow1();
+	drawImGuiWindow1();
 }
 
 //--------------------------------------------------------------
@@ -68,12 +68,11 @@ void ofAppGuiViews::drawImGuiApp() {
 	if (app == nullptr) return;
 
 	// for all the queued especial windows in setup()!
+	if (app->bGui)
+		IMGUI_SUGAR__WINDOWS_CONSTRAINTS;
 	if (app->ui.BeginWindow(app->bGui)) {
-		//app->ui.drawWidgetsSpecialWindowsManager();
-		//app->ui.AddSpacingSeparated();
-
 		app->ui.Add(app->mixer.bGui, OFX_IM_TOGGLE_BIG);
-
+		app->ui.AddSpacingSeparated();
 		app->ui.Add(app->w.params, SurfingGuiGroupStyle_Collapsed);
 
 		app->ui.EndWindow();
@@ -84,6 +83,8 @@ void ofAppGuiViews::drawImGuiApp() {
 void ofAppGuiViews::drawImGuiWindow0() {
 	if (app == nullptr) return;
 
+	if (app->mixer.bGui)
+		IMGUI_SUGAR__WINDOWS_CONSTRAINTS;
 	if (app->ui.BeginWindow(app->mixer.bGui)) {
 		app->ui.AddLabelHuge("Mixer", false);
 
@@ -96,7 +97,7 @@ void ofAppGuiViews::drawImGuiWindow0() {
 }
 
 //--------------------------------------------------------------
-void ofAppGuiViews::drawImGuiSpecialWindow1() {
+void ofAppGuiViews::drawImGuiWindow1() {
 	//if (app == nullptr) return;
 
 	//if (app->ui.BeginWindowSpecial(1)) {

@@ -1,12 +1,12 @@
 [
     {
         "position": {
-            "x": 2016.0,
-            "y": 148.0
+            "x": 2054.0,
+            "y": 127.0
         },
         "size": {
-            "height": 1920,
-            "width": 1080
+            "height": 1916,
+            "width": 1076
         },
         "window_mode": 0
     },
@@ -17,12 +17,12 @@
                 "DisableAutoSave": "0",
                 "Keys": "0",
                 "ShowDebug": "0",
-                "ShowInfo": "1",
-                "ShowInfoPerformanceAlways": "1",
+                "ShowInfo": "0",
+                "ShowInfoPerformanceAlways": "0",
                 "StayOnTop": "0"
             },
             "Window": {
-                "FpsTarget": "60",
+                "FpsTarget": "120",
                 "vSync": "1"
             }
         }

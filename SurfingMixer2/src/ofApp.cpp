@@ -2,14 +2,13 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-	setupParameters();
 	guiViews.setApp(this);
 
 	//--
 
 	setupImGui();
 
-	//mixer.setLogLevel(OF_LOG_SILENT);
+	mixer.setLogLevel(OF_LOG_SILENT);
 	mixer.setup();
 	//mixer.resizeFbos(1080,1920);
 	ofEnableArbTex();
@@ -21,36 +20,22 @@ void ofApp::setup() {
 #ifdef USE_ofxNDI
 	ndi_CH1.setup();
 	ndi_CH2.setup();
+	ndiOut.setup(1080, 1920, "SurfingMixer");
 #endif
-}
-
-//--------------------------------------------------------------
-void ofApp::setupParameters() {
 }
 
 //--------------------------------------------------------------
 void ofApp::setupImGui() {
 	ui.setImGuiViewPort(true);
-	//ui.setup(IM_GUI_MODE_INSTANTIATED_DOCKING_RAW);
+	ui.setup(IM_GUI_MODE_INSTANTIATED_DOCKING_RAW);
 	ui.setup();
-
-	//#ifdef USE_ofxNDI
-	//	ui.addWindowSpecial(ndi.bGui); // index 0
-	//#endif
-	//ui.addWindowSpecial(mixer.bGui); // index 1
-
-	//// Extra windows to be auto included in windows menu
-	//ui.addWindowExtra(bGui);
-
-	//--
-
 	ui.startup();
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
 	static bool bDone = false;
-	if (!bDone && ofGetElapsedTimef()>2) {
+	if (!bDone && ofGetElapsedTimef() > 2) {
 		bDone = true;
 		ndi_CH1.ndiReceiver.SetSenderName("W11-AERO (surfingTitles)");
 		ndi_CH2.ndiReceiver.SetSenderName("W11-AERO (surfingVideoSkip)");
@@ -93,9 +78,15 @@ void ofApp::draw() {
 
 //--------------------------------------------------------------
 void ofApp::drawScene() {
-
 	// Mixer OUT
+#ifdef USE_ofxNDI
+	ndiOut.begin();
 	mixer.draw();
+	ndiOut.end();
+	ndiOut.draw();
+#else
+	mixer.draw();
+#endif
 
 	//auto & r = ui.getRectangleCentralViewport();
 }
