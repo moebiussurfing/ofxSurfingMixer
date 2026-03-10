@@ -38,7 +38,7 @@ public:
 	void drawImGuiSpecialWindow1();
 
 
-	ofParameter<bool> bGui{ "SurfingMixer APP", true };
+	ofParameter<bool> bGui{ "ofApp", true };
 
 	//----
 

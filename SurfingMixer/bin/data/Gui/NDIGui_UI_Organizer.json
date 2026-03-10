@@ -19,7 +19,7 @@
         "Windows": {
             "IN_1": "1",
             "IN_2": "1",
-            "NDI_HELPER": "0",
+            "NDI_HELPER": "1",
             "OUT": "1"
         }
     }

@@ -1451,7 +1451,7 @@ void ofxSurfingMixer::setToggleGuiVisible() {
 }
 //--------------------------------------------------------------
 ofParameterGroup & ofxSurfingMixer::getParamsPreset() {
-	ofLogVerbose("ofxSurfingMixer") << "getParamsPreset()";
+	//ofLogVerbose("ofxSurfingMixer") << "getParamsPreset()";
 	return params_Preset;
 }
 //--------------------------------------------------------------

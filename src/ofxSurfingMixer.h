@@ -63,7 +63,8 @@ private:
 
 	//----
 
-private:
+//private:
+public:
 	void reallocate(int w, int h);
 	void resizeFbos(int w, int h);
 

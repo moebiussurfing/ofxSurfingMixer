@@ -77,6 +77,7 @@ void ofApp::drawGui() {
 #ifdef USE_ofxNDI
 	// NDI Preview
 	ndi.draw();
+
 	// Gui
 	ndi.drawGui();
 #endif
@@ -152,6 +153,9 @@ void ofApp::drawImGuiApp() {
 
 		ui.Add(ndi.bGui, OFX_IM_TOGGLE_BIG);
 		ui.Add(mixer.bGui, OFX_IM_TOGGLE_BIG);
+
+		ui.Add(w.params);
+
 		ui.EndWindow();
 	}
 }
