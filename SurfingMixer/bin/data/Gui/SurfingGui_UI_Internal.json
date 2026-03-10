@@ -1,0 +1,83 @@
+{
+    "ofxSurfingGui": {
+        "Advanced_Settings": {
+            "Internal": {
+                "Advanced": "0",
+                "Auto_Resize": "1",
+                "Debug": "0",
+                "Extra": "0",
+                "GAME": "0",
+                "GAME_SOLO": "0",
+                "InternalConfig": {
+                    "Flip_Wheel": "0",
+                    "Font": "0",
+                    "GlobalScale": "1",
+                    "Global_Scale_Wheel": "0",
+                    "Mouse_Wheel": "1",
+                    "Theme_UI": "0"
+                },
+                "Keys": "1",
+                "Menu": "0",
+                "Minimize": "0",
+                "Show_Gui": "1"
+            },
+            "ModulesWindows": {
+                "Debugger_ImGui": "0",
+                "LOG": "0",
+                "Log_Keys": "0",
+                "Modules": {
+                    "Module_Help": {
+                        "Help_App": {
+                            "Help_App": "1"
+                        },
+                        "Help_Internal": {
+                            "Help_Internal": "1"
+                        }
+                    },
+                    "Module_Log": {
+                        "Amount": "20",
+                        "AutoFit": "1",
+                        "AutoScroll": "1",
+                        "FILTER": "0",
+                        "Font": "0",
+                        "HideTags": "1",
+                        "Keyword": "",
+                        "Limited": "0",
+                        "MinimizeLog": "1",
+                        "OPTIONS": "0",
+                        "OneLine": "0",
+                        "PAUSE": "0",
+                        "Separators": "0",
+                        "Tag": "0",
+                        "Tight": "1",
+                        "TimeStamps": "0"
+                    },
+                    "Module_Notifier": {
+                        "Align_Right": "1",
+                        "Bg": "1",
+                        "CM_Pad": "0",
+                        "CM_Right": "0",
+                        "CM_Round": "1",
+                        "CM_Width": "5",
+                        "Color_Mark": "1",
+                        "Duration": "5000",
+                        "Font": "1",
+                        "Inner_Pad_x": "40",
+                        "Inner_Pad_y": "20",
+                        "Notifier": "0",
+                        "Pad_x": "5",
+                        "Pad_y": "0",
+                        "Round": "3",
+                        "Spacing_y": "5",
+                        "Tag_Color": "1"
+                    }
+                },
+                "NOTIFIER": "1",
+                "Notifier_Editor": "0"
+            },
+            "Windows": {
+                "Solo": "0"
+            }
+        }
+    }
+}

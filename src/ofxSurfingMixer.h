@@ -196,10 +196,11 @@ private:
 
 	//-
 
+public:
+	ofParameter<bool> bGui;
 private:
 	ofParameterGroup params_Internal;
 	ofParameter<bool> bModeActive;
-	ofParameter<bool> bGui;
 	ofParameter<glm::vec2> positionGui;
 	ofParameter<int> MODE_AppMixer;
 	ofParameter<std::string> MODE_AppMixer_Name;

@@ -1,0 +1,30 @@
+[
+    {
+        "position": {
+            "x": -1920.0,
+            "y": 23.0
+        },
+        "size": {
+            "height": 1057,
+            "width": 1920
+        },
+        "window_mode": 0
+    },
+    {
+        "Extra": {
+            "Session": {
+                "ConsoleWindow": "0",
+                "DisableAutoSave": "0",
+                "Keys": "1",
+                "ShowDebug": "0",
+                "ShowInfo": "0",
+                "ShowInfoPerformanceAlways": "1",
+                "StayOnTop": "0"
+            },
+            "Window": {
+                "FpsTarget": "60",
+                "vSync": "0"
+            }
+        }
+    }
+]

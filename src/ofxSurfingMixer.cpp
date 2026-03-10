@@ -144,7 +144,7 @@ void ofxSurfingMixer::setupParamsInternal() {
 	MODE_AppMixer_Name.setSerializable(false);
 	//ENABLE_Debug.set("DEBUG", true);
 	bEnableAutosave.set("AUTO SAVE", false);
-	bGui.set("GUI", true);
+	bGui.set("SurfingMixer", true);
 
 	params_Internal.setName("INTERNAL");
 	params_Internal.add(MODE_AppMixer);

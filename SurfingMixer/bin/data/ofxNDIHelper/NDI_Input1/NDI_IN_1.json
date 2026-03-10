@@ -1,0 +1,17 @@
+{
+    "NDI_INPUT": {
+        "CONTROL": {
+            "Debug": "1",
+            "Edit": "1",
+            "Lock_Aspect": "1",
+            "Scale": "0",
+            "UI_Position": "415, 5"
+        },
+        "NDI_INPUT": {
+            "Draw": "1",
+            "Enable": "1",
+            "Mini": "0",
+            "Name": "W11-AERO (Test Pattern 3)"
+        }
+    }
+}

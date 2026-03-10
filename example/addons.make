@@ -1,5 +1,3 @@
 ofxGui
 ofxSceneTEST
-ofxSurfingHelpers
 ofxSurfingMixer
-ofxWindowApp
