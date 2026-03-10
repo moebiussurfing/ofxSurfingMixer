@@ -56,7 +56,7 @@ void ofAppGuiViews::drawImGui() {
 void ofAppGuiViews::drawImGuiSpecialWindows() {
 	if (app == nullptr) return;
 
-	drawImGuiSpecialWindow0();
+	drawImGuiWindow0();
 
 	//--
 
@@ -69,8 +69,8 @@ void ofAppGuiViews::drawImGuiApp() {
 
 	// for all the queued especial windows in setup()!
 	if (app->ui.BeginWindow(app->bGui)) {
-		app->ui.drawWidgetsSpecialWindowsManager();
-		app->ui.AddSpacingSeparated();
+		//app->ui.drawWidgetsSpecialWindowsManager();
+		//app->ui.AddSpacingSeparated();
 
 		app->ui.Add(app->mixer.bGui, OFX_IM_TOGGLE_BIG);
 
@@ -81,10 +81,10 @@ void ofAppGuiViews::drawImGuiApp() {
 }
 
 //--------------------------------------------------------------
-void ofAppGuiViews::drawImGuiSpecialWindow0() {
+void ofAppGuiViews::drawImGuiWindow0() {
 	if (app == nullptr) return;
 
-	if (app->ui.BeginWindowSpecial(0)) {
+	if (app->ui.BeginWindow(app->mixer.bGui)) {
 		app->ui.AddLabelHuge("Mixer", false);
 
 		app->ui.AddGroup(app->mixer.getParamsPreset(), SurfingGuiGroupStyle_Collapsed);
@@ -97,16 +97,16 @@ void ofAppGuiViews::drawImGuiSpecialWindow0() {
 
 //--------------------------------------------------------------
 void ofAppGuiViews::drawImGuiSpecialWindow1() {
-	if (app == nullptr) return;
+	//if (app == nullptr) return;
 
-	if (app->ui.BeginWindowSpecial(1)) {
-		app->ui.AddLabelHuge("Window 1", false);
-		//app->ui.AddGroup(app->mixer.getParamsPreset());
+	//if (app->ui.BeginWindowSpecial(1)) {
+	//	app->ui.AddLabelHuge("Window 1", false);
+	//	//app->ui.AddGroup(app->mixer.getParamsPreset());
 
-		//--
+	//	//--
 
-		app->ui.EndWindowSpecial();
-	}
+	//	app->ui.EndWindowSpecial();
+	//}
 }
 
 //----

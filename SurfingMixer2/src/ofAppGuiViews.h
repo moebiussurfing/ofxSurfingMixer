@@ -9,7 +9,7 @@ public:
 	void drawImGui();
 	void drawImGuiApp();
 	void drawImGuiSpecialWindows();
-	void drawImGuiSpecialWindow0();
+	void drawImGuiWindow0();
 	void drawImGuiSpecialWindow1();
 
 private:

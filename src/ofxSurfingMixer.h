@@ -3,7 +3,7 @@
 
 //-----------------------------
 
-#define INCLUDE_ofxGui
+//#define INCLUDE_ofxGui
 #ifdef INCLUDE_ofxGui
 	#include "ofxGui.h"
 #endif

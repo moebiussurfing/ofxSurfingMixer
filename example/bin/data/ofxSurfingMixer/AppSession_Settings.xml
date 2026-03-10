@@ -2,7 +2,7 @@
 <AppSession>
 	<INTERNAL>
 		<MIXER_MODE>1</MIXER_MODE>
-		<GUI>1</GUI>
+		<SurfingMixer>1</SurfingMixer>
 		<ACTIVE>1</ACTIVE>
 		<AUTO_SAVE>0</AUTO_SAVE>
 		<GUI_POSITION>1478, 53</GUI_POSITION>

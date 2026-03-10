@@ -9,10 +9,11 @@ void ofApp::setup() {
 
 	setupImGui();
 
-	mixer.setLogLevel(OF_LOG_SILENT);
+	//mixer.setLogLevel(OF_LOG_SILENT);
 	mixer.setup();
-	mixer.resizeFbos(1080,1920);
-	mixer.reallocate(1080,1920);
+	//mixer.resizeFbos(1080,1920);
+	ofEnableArbTex();
+	mixer.reallocate(1080, 1920);
 
 	w.setup(&w);
 	w.setFrameRate(60);
@@ -36,7 +37,7 @@ void ofApp::setupImGui() {
 	//#ifdef USE_ofxNDI
 	//	ui.addWindowSpecial(ndi.bGui); // index 0
 	//#endif
-	ui.addWindowSpecial(mixer.bGui); // index 1
+	//ui.addWindowSpecial(mixer.bGui); // index 1
 
 	//// Extra windows to be auto included in windows menu
 	//ui.addWindowExtra(bGui);
@@ -110,31 +111,33 @@ void ofApp::drawGui() {
 }
 
 //--------------------------------------------------------------
-void ofApp::windowResized(int w, int h) {
-	//mixer.windowResized(w, h);
-}
-
-//--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 	//ofLogNotice(__FUNCTION__) << " " << char(key);
 
 	if (key == 'g') bGui = !bGui;
 
 	if (key == OF_KEY_SPACE) {
-		//ndi_CH1.ndiReceiver.SetSenderName("surfingVideoSkip");
-		//ndi_CH2.ndiReceiver.SetSenderName("surfingTitles");
-		ndi_CH1.ndiReceiver.SetSenderName("Test Pattern 2");
-		ndi_CH2.ndiReceiver.SetSenderName("Test Pattern");
+		////ndi_CH1.ndiReceiver.SetSenderName("surfingVideoSkip");
+		////ndi_CH2.ndiReceiver.SetSenderName("surfingTitles");
+		//ndi_CH1.ndiReceiver.SetSenderName("Test Pattern 2");
+		//ndi_CH2.ndiReceiver.SetSenderName("Test Pattern");
 	}
 
 #ifdef USE_ofxNDI
-	ndi_CH1.keyPressed(key);
-	//ndi_CH2.keyPressed(key);
+	//ndi_CH1.keyPressed(key);
+	////ndi_CH2.keyPressed(key);
 #endif
 }
 
 //--------------------------------------------------------------
+void ofApp::windowResized(int w, int h) {
+	mixer.windowResized(w, h);
+}
+
+//--------------------------------------------------------------
 void ofApp::exit() {
+	mixer.exit();
+
 #ifdef USE_ofxNDI
 	ndi_CH1.exit();
 	ndi_CH2.exit();
