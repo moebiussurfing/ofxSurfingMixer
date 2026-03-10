@@ -3,6 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup() {
 	setupParameters();
+	guiViews.setApp(this);
 
 	//--
 
@@ -10,11 +11,11 @@ void ofApp::setup() {
 
 #ifdef USE_ofxNDI
 	ndi_CH1.setup();
-	ndi_CH1.ndiReceiver.SetSenderName("surfingVideoSkip");
+	//ndi_CH1.ndiReceiver.SetSenderName("surfingVideoSkip");
 	ndi_CH1.ndiReceiver.SetSenderIndex(1);
 
 	ndi_CH2.setup();
-	ndi_CH2.ndiReceiver.SetSenderName("surfingTitles");
+	//ndi_CH2.ndiReceiver.SetSenderName("surfingTitles");
 	ndi_CH2.ndiReceiver.SetSenderIndex(0);
 #endif
 
@@ -103,106 +104,8 @@ void ofApp::drawGui() {
 	// Gui
 	mixer.drawGui();
 
-	drawImGui();
+	guiViews.drawImGui();
 }
-
-//--------------------------------------------------------------
-void ofApp::drawImGui() {
-	// Gui Manager with Docking features:
-	// In between here (Begin/End)
-	// we can render ImGui windows and widgets,
-	// and all the docking magic.
-
-	//--
-
-	ui.Begin();
-	{
-//--
-
-// 1. Docking magic
-#if 0
-		ui.BeginDocking();
-		{
-		}
-		ui.EndDocking();
-#endif
-
-		//--
-
-		// 2.2 Populate the visible toggles
-		drawImGuiApp();
-
-		//--
-
-		// 3. The Special Windows
-
-		// The windows previously queued to the manager on setup(),
-		// that are controlled by the Layout Presets Engine.
-		// Render ImGui Windows and Widgets now!
-		{
-			drawImGuiSpecialWindows();
-		}
-
-		//--
-	}
-	ui.End();
-}
-
-//----
-
-//--------------------------------------------------------------
-void ofApp::drawImGuiSpecialWindows() {
-
-	drawImGuiSpecialWindow0();
-
-	//--
-
-	drawImGuiSpecialWindow1();
-}
-
-//--------------------------------------------------------------
-void ofApp::drawImGuiApp() {
-	// for all the queued especial windows in setup()!
-	if (ui.BeginWindow(bGui)) {
-		ui.drawWidgetsSpecialWindowsManager();
-		ui.AddSpacingSeparated();
-
-		ui.Add(mixer.bGui, OFX_IM_TOGGLE_BIG);
-
-		ui.Add(w.params, SurfingGuiGroupStyle_Collapsed);
-
-		ui.EndWindow();
-	}
-}
-
-//--------------------------------------------------------------
-void ofApp::drawImGuiSpecialWindow0() {
-
-	if (ui.BeginWindowSpecial(0)) {
-		ui.AddLabelHuge("Mixer", false);
-
-		ui.AddGroup(mixer.getParamsPreset(), SurfingGuiGroupStyle_Collapsed);
-
-		//--
-
-		ui.EndWindowSpecial();
-	}
-}
-
-//--------------------------------------------------------------
-void ofApp::drawImGuiSpecialWindow1() {
-
-	if (ui.BeginWindowSpecial(1)) {
-		ui.AddLabelHuge("Window 1", false);
-		//ui.AddGroup(mixer.getParamsPreset());
-
-		//--
-
-		ui.EndWindowSpecial();
-	}
-}
-
-//----
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h) {

@@ -5,6 +5,7 @@
 #include "ofxSurfingImGui.h"
 #include "ofxSurfingMixer.h"
 #include "ofxWindowApp.h"
+#include "ofAppGuiViews.h"
 
 #define USE_ofxNDI
 #ifdef USE_ofxNDI
@@ -31,11 +32,6 @@ public:
 	ofxSurfingGui ui;
 
 	void setupImGui();
-	void drawImGui();
-	void drawImGuiApp();
-	void drawImGuiSpecialWindows();
-	void drawImGuiSpecialWindow0();
-	void drawImGuiSpecialWindow1();
 
 	ofParameter<bool> bGui{ "ofApp", true };
 	
@@ -60,4 +56,5 @@ public:
 #endif
 
 	ofxWindowApp w;
+	ofAppGuiViews guiViews;
 };
