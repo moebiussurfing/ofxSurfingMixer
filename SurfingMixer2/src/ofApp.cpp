@@ -2,11 +2,9 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-	guiViews.setApp(this);
+	setupImGui();
 
 	//--
-
-	setupImGui();
 
 	mixer.setLogLevel(OF_LOG_SILENT);
 	mixer.setup();
@@ -26,6 +24,7 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::setupImGui() {
+	guiViews.setApp(this);
 	ui.setImGuiViewPort(true);
 	ui.setup(IM_GUI_MODE_INSTANTIATED_DOCKING_RAW);
 	ui.setup();
