@@ -9,16 +9,6 @@ void ofApp::setup() {
 
 	setupImGui();
 
-#ifdef USE_ofxNDI
-	ndi_CH1.setup();
-	//ndi_CH1.ndiReceiver.SetSenderName("surfingVideoSkip");
-	ndi_CH1.ndiReceiver.SetSenderIndex(1);
-
-	ndi_CH2.setup();
-	//ndi_CH2.ndiReceiver.SetSenderName("surfingTitles");
-	ndi_CH2.ndiReceiver.SetSenderIndex(0);
-#endif
-
 	mixer.setLogLevel(OF_LOG_SILENT);
 	mixer.setup();
 	mixer.resizeFbos(1080,1920);
@@ -26,6 +16,11 @@ void ofApp::setup() {
 
 	w.setup(&w);
 	w.setFrameRate(60);
+
+#ifdef USE_ofxNDI
+	ndi_CH1.setup();
+	ndi_CH2.setup();
+#endif
 }
 
 //--------------------------------------------------------------
@@ -53,6 +48,13 @@ void ofApp::setupImGui() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+	static bool bDone = false;
+	if (!bDone && ofGetElapsedTimef()>2) {
+		bDone = true;
+		ndi_CH1.ndiReceiver.SetSenderName("W11-AERO (surfingTitles)");
+		ndi_CH2.ndiReceiver.SetSenderName("W11-AERO (surfingVideoSkip)");
+	}
+
 	updateScene();
 }
 
@@ -119,8 +121,10 @@ void ofApp::keyPressed(int key) {
 	if (key == 'g') bGui = !bGui;
 
 	if (key == OF_KEY_SPACE) {
-		ndi_CH1.ndiReceiver.SetSenderName("surfingVideoSkip");
-		ndi_CH2.ndiReceiver.SetSenderName("surfingTitles");
+		//ndi_CH1.ndiReceiver.SetSenderName("surfingVideoSkip");
+		//ndi_CH2.ndiReceiver.SetSenderName("surfingTitles");
+		ndi_CH1.ndiReceiver.SetSenderName("Test Pattern 2");
+		ndi_CH2.ndiReceiver.SetSenderName("Test Pattern");
 	}
 
 #ifdef USE_ofxNDI

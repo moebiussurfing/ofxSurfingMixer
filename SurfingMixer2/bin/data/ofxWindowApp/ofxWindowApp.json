@@ -1,7 +1,7 @@
 [
     {
         "position": {
-            "x": 1634.0,
+            "x": 297.0,
             "y": 145.0
         },
         "size": {
@@ -15,7 +15,7 @@
             "Session": {
                 "ConsoleWindow": "0",
                 "DisableAutoSave": "0",
-                "Keys": "1",
+                "Keys": "0",
                 "ShowDebug": "0",
                 "ShowInfo": "1",
                 "ShowInfoPerformanceAlways": "1",
